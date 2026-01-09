@@ -3,6 +3,8 @@
 package mx.insabit.ValidacionMateriales.Service;
 
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
@@ -60,10 +62,16 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional
     public void eliminar(Long id) {
-        materialRepository.deleteById(id);
-    }
-    
+
+    Material material = materialRepository.findById(id)
+            .orElseThrow(() ->
+                    new EntityNotFoundException("Material no encontrado con id " + id)
+            );
+
+    materialRepository.delete(material);
+}
     
 
     /* ===== RESUMEN DE INVENTARIO ===== */

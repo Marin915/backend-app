@@ -1,6 +1,7 @@
 package mx.insabit.ValidacionMateriales.Controller;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 
 
 
@@ -39,55 +42,40 @@ public class MaterialController {
     }
 
     /* =======================
-       CREAR MATERIAL
+       CRUD MATERIALES
        ======================= */
+
     @PostMapping
-    public ResponseEntity<MaterialDTO> crear(@RequestBody MaterialDTO dto) {
+    public ResponseEntity<Material> crear(@RequestBody MaterialDTO dto) {
 
-        Material material = new Material();
-        material.setClave(dto.getClave());
-        material.setDescripcion(dto.getDescripcion());
-        material.setUnidadMedida(dto.getUnidadMedida());
-        material.setPrecioUnitario(dto.getPrecioUnitario());
-        material.setCategoria(dto.getCategoria());
-        material.setActivo(true);
+    Material material = new Material();
+    material.setClave(dto.getClave());
+    material.setDescripcion(dto.getDescripcion());
+    material.setUnidadMedida(dto.getUnidadMedida());
+    material.setPrecioUnitario(dto.getPrecioUnitario());
+    material.setCategoria(dto.getCategoria());
+    material.setActivo(true);
 
-        Material guardado = materialService.guardar(material);
+    return ResponseEntity.ok(materialService.guardar(material));
+}
 
-        return ResponseEntity.ok(toDTO(guardado));
-    }
 
-    /* =======================
-       LISTAR MATERIALES
-       ======================= */
     @GetMapping
-    public ResponseEntity<List<MaterialDTO>> listar() {
-
-        List<MaterialDTO> lista = materialService.listar()
-                .stream()
-                .map(this::toDTO)
-                .toList();
-
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<List<Material>> listar() {
+        return ResponseEntity.ok(materialService.listar());
     }
 
-    /* =======================
-       OBTENER POR ID
-       ======================= */
     @GetMapping("/{id}")
-    public ResponseEntity<MaterialDTO> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                toDTO(materialService.obtenerPorId(id))
-        );
+    public ResponseEntity<Material> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(materialService.obtenerPorId(id));
     }
 
-    /* =======================
-       ACTUALIZAR
-       ======================= */
     @PutMapping("/{id}")
-    public ResponseEntity<MaterialDTO> actualizar(
+    public ResponseEntity<Material> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody MaterialDTO dto) {
+
+        logger.info("Actualizando material id {}", id);
 
         Material material = materialService.obtenerPorId(id);
 
@@ -98,87 +86,83 @@ public class MaterialController {
         material.setCategoria(dto.getCategoria());
         material.setActivo(dto.getActivo());
 
-        Material actualizado = materialService.guardar(material);
-
-        return ResponseEntity.ok(toDTO(actualizado));
+        return ResponseEntity.ok(materialService.guardar(material));
     }
 
-    /* =======================
-       ELIMINAR
-       ======================= */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+   @DeleteMapping("/{id}")
+public ResponseEntity<?> eliminar(@PathVariable Long id) {
+
+    try {
         materialService.eliminar(id);
         return ResponseEntity.noContent().build();
+
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+    } catch (DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("No se puede eliminar el material porque tiene movimientos asociados");
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno al eliminar material");
     }
+}
+
 
     /* =======================
        STOCK
        ======================= */
+
     @GetMapping("/{id}/stock")
     public ResponseEntity<Integer> stock(@PathVariable Long id) {
         return ResponseEntity.ok(movimientoService.obtenerStock(id));
     }
 
     /* =======================
-       MOVIMIENTOS
+       MOVIMIENTOS (ENTRADA / SALIDA)
        ======================= */
-    @PostMapping("/{id}/movimientos")
-    public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
-            @PathVariable Long id,
-            @RequestBody MovimientoMaterialDTO dto) {
 
-        Material material = materialService.obtenerPorId(id);
+ @PostMapping("/{id}/movimientos")
+public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
+        @PathVariable Long id,
+        @RequestBody MovimientoMaterialDTO dto) {
 
-        MovimientoMaterial movimiento = new MovimientoMaterial();
-        movimiento.setMaterial(material);
-        movimiento.setTipo(dto.getTipo());
-        movimiento.setCantidad(dto.getCantidad());
+    Material material = materialService.obtenerPorId(id);
 
-        MovimientoMaterial guardado = movimientoService.registrar(movimiento);
+    MovimientoMaterial movimiento = new MovimientoMaterial();
+    movimiento.setMaterial(material);
+    movimiento.setTipo(dto.getTipo());
+    movimiento.setCantidad(dto.getCantidad());
 
-        MovimientoMaterialDTO response = new MovimientoMaterialDTO();
-        response.setId(guardado.getId());
-        response.setTipo(guardado.getTipo());
-        response.setCantidad(guardado.getCantidad());
-        response.setFecha(guardado.getFecha());
-        response.setMaterialId(material.getId());
+    MovimientoMaterial guardado = movimientoService.registrar(movimiento);
 
-        return ResponseEntity.ok(response);
-    }
+    MovimientoMaterialDTO response = new MovimientoMaterialDTO();
+    response.setId(guardado.getId());
+    response.setTipo(guardado.getTipo());
+    response.setCantidad(guardado.getCantidad());
+    response.setFecha(guardado.getFecha());
+    response.setMaterialId(material.getId());
 
+    return ResponseEntity.ok(response);
+}
     /* =======================
        RESUMEN INVENTARIO
        ======================= */
+
     @GetMapping("/resumen-todo")
     public ResponseEntity<List<MaterialResumenDTO>> listarResumen() {
 
         logger.info("Entrando a listarResumen()");
+
         List<MaterialResumenDTO> resumen =
                 materialService.listarResumen();
+
         logger.info("Resumen obtenido: {}", resumen.size());
 
         return ResponseEntity.ok(resumen);
     }
-
-    /* =======================
-       MAPPER
-       ======================= */
-    private MaterialDTO toDTO(Material m) {
-
-        MaterialDTO dto = new MaterialDTO();
-        dto.setId(m.getId());
-        dto.setClave(m.getClave());
-        dto.setDescripcion(m.getDescripcion());
-        dto.setUnidadMedida(m.getUnidadMedida());
-        dto.setPrecioUnitario(m.getPrecioUnitario());
-        dto.setCategoria(m.getCategoria());
-        dto.setActivo(m.getActivo());
-
-        return dto;
-    }
 }
-
     
    /* private final MaterialService servicio;
 
