@@ -1,6 +1,7 @@
 
 package mx.insabit.ValidacionMateriales.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -17,16 +17,18 @@ import java.time.LocalDateTime;
 @Table( name = "movimiento_material")
 public class MovimientoMaterial {
     
-  @Id
+   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "material_id", nullable = false)
+    @JsonIgnore
     private Material material;
 
     @ManyToOne
     @JoinColumn(name = "casa_id")
+    @JsonIgnore
     private Casa casa; // solo se usa en SALIDAS
 
     @Column(nullable = false, length = 10)
@@ -36,7 +38,7 @@ public class MovimientoMaterial {
     private Integer cantidad;
 
     private LocalDateTime fecha = LocalDateTime.now();
-
+    
     public MovimientoMaterial() {
     }
 

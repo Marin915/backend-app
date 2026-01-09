@@ -1,33 +1,34 @@
 
 package mx.insabit.ValidacionMateriales.DTO;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
-/**
- *
- * @author Marin
- */
 
 public class MaterialDTO {
-    
-    private Long id;
+  
+   private Long id; // solo para edición
+
+    @NotBlank(message = "La clave es obligatoria")
+    @Size(max = 50)
     private String clave;
+
+    @NotBlank(message = "La descripción es obligatoria")
+    @Size(max = 200)
     private String descripcion;
+
+    @NotBlank(message = "La unidad de medida es obligatoria")
     private String unidadMedida;
+
+    @NotNull(message = "El precio unitario es obligatorio")
     private BigDecimal precioUnitario;
+
+    @Size(max = 100)
     private String categoria;
 
-    public MaterialDTO() {
-    }
-
-    public MaterialDTO(Long id, String clave, String descripcion, String unidadMedida, BigDecimal precioUnitario, String categoria) {
-        this.id = id;
-        this.clave = clave;
-        this.descripcion = descripcion;
-        this.unidadMedida = unidadMedida;
-        this.precioUnitario = precioUnitario;
-        this.categoria = categoria;
-    }
+    private Boolean activo = true;
 
     public Long getId() {
         return id;
@@ -76,6 +77,15 @@ public class MaterialDTO {
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
     
     
 }

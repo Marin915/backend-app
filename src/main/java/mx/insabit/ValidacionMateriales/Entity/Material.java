@@ -1,6 +1,7 @@
 
 package mx.insabit.ValidacionMateriales.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import java.util.List;
 @Table(name = "material")
 public class Material {
     
- @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -42,8 +43,9 @@ public class Material {
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
-    private List<MovimientoMaterial> movimientos;
-
+    @JsonIgnore
+    private List<MovimientoMaterial> movimientos;       
+    
     public Material() {
     }
 

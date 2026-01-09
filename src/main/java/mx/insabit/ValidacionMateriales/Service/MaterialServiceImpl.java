@@ -29,6 +29,7 @@ public class MaterialServiceImpl implements MaterialService {
         this.movimientoRepository = movimientoRepository;
     }
 
+    
     /* ===== CRUD QUE YA TENÍAS ===== */
 
     @Override
@@ -62,6 +63,8 @@ public class MaterialServiceImpl implements MaterialService {
     public void eliminar(Long id) {
         materialRepository.deleteById(id);
     }
+    
+    
 
     /* ===== RESUMEN DE INVENTARIO ===== */
 
