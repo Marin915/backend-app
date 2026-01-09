@@ -3,18 +3,106 @@
 package mx.insabit.ValidacionMateriales.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
+import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Excepciones.NotFoundException;
 import mx.insabit.ValidacionMateriales.MapStruc.MaterialMapper;
-import mx.insabit.ValidacionMateriales.MaterialesEntity;
+import mx.insabit.ValidacionMateriales.Entity.MaterialesEntity;
+import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialesRepository;
+import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MaterialServiceImpl implements MaterialService {
 
-  private final MaterialesRepository repo;
+    private final MaterialRepository materialRepository;
+    private final MovimientoMaterialRepository movimientoRepository;
+
+    public MaterialServiceImpl(MaterialRepository materialRepository,
+                               MovimientoMaterialRepository movimientoRepository) {
+        this.materialRepository = materialRepository;
+        this.movimientoRepository = movimientoRepository;
+    }
+
+    /* ===== CRUD QUE YA TENÍAS ===== */
+
+    @Override
+    public Material guardar(Material material) {
+        return materialRepository.save(material);
+    }
+
+    @Override
+    public Material actualizar(Long id, Material material) {
+        Material existente = obtenerPorId(id);
+        existente.setClave(material.getClave());
+        existente.setDescripcion(material.getDescripcion());
+        existente.setUnidadMedida(material.getUnidadMedida());
+        existente.setPrecioUnitario(material.getPrecioUnitario());
+        existente.setCategoria(material.getCategoria());
+        return materialRepository.save(existente);
+    }
+
+    @Override
+    public List<Material> listar() {
+        return materialRepository.findAll();
+    }
+
+    @Override
+    public Material obtenerPorId(Long id) {
+        return materialRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Material no encontrado"));
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        materialRepository.deleteById(id);
+    }
+
+    /* ===== RESUMEN DE INVENTARIO ===== */
+
+ @Override
+public List<MaterialResumenDTO> listarResumen() {
+
+    List<Material> materiales = materialRepository.findAll();
+    List<MaterialResumenDTO> lista = new ArrayList<>();
+
+    for (Material m : materiales) {
+
+       Integer entradas = movimientoRepository.obtenerEntradas(m.getId());
+Integer salidas = movimientoRepository.obtenerSalidas(m.getId());
+
+if (entradas == null) entradas = 0;
+if (salidas == null) salidas = 0;
+
+Integer stock = entradas - salidas;
+
+
+        MaterialResumenDTO dto = new MaterialResumenDTO();
+        dto.setId(m.getId());
+        dto.setNombre(m.getClave());
+        dto.setDescripcion(m.getDescripcion());
+        dto.setUnidadMedida(m.getUnidadMedida());
+        dto.setCantidad(stock);
+        dto.setEntradas(entradas);
+        dto.setSalidas(salidas);
+        dto.setPrecioUnitario(m.getPrecioUnitario());
+        dto.setCategoria(m.getCategoria());
+
+        lista.add(dto);
+    }
+
+    return lista;
+}
+
+
+
+  /*
+    private final MaterialesRepository repo;
     private final MaterialMapper mapper;
 
     public MaterialServiceImpl(MaterialesRepository repo, MaterialMapper mapper) {
@@ -64,4 +152,5 @@ public class MaterialServiceImpl implements MaterialService {
 
         repo.deleteById(id);
     }
+    */
 }

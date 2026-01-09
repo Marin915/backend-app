@@ -5,18 +5,24 @@
 package mx.insabit.ValidacionMateriales.MapStruc;
 
 
+import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
-import mx.insabit.ValidacionMateriales.MaterialesEntity;
+import mx.insabit.ValidacionMateriales.Entity.Material;
+import mx.insabit.ValidacionMateriales.Entity.MaterialesEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface MaterialMapper {
 
+    Material toEntity(MaterialDTO dto);
+
+    MaterialDTO toDTO(Material entity);
+    /*
     MaterialMapper INSTANCE = Mappers.getMapper(MaterialMapper.class);
 
     MaterialesDTO toDTO(MaterialesEntity material);
 
     MaterialesEntity toEntity(MaterialesDTO dto);
-    
+    */
 }

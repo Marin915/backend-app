@@ -1,4 +1,4 @@
-package com.example.Materiales;
+package mx.insabit.ValidacionMateriales;
 
 import mx.insabit.ValidacionMateriales.MaterialesApplication;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,5 @@
 
-package mx.insabit.ValidacionMateriales;
+package mx.insabit.ValidacionMateriales.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
