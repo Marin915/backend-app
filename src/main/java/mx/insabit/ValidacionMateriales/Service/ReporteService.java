@@ -119,7 +119,7 @@ public class ReporteService {
 
     private void crearEncabezados(Workbook workbook, Sheet sheet) {
         Row headerRow = sheet.createRow(3); // fila 4 (índice 3)
-        String[] headers = {"ID", "Clave", "Descripción", "Unidad", "Cantidad", "Precio", "Entradas", "Salidas", "Categoría", "Acciones"};
+        String[] headers = {"ID", "Clave", "Descripción", "Unidad", "Cantidad", "Precio Unitario", "Entradas", "Salidas", "Categoría"};
 
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
