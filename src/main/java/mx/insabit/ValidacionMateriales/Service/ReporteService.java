@@ -1,22 +1,24 @@
 
 package mx.insabit.ValidacionMateriales.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 @Service
 public class ReporteService {
 
-    private final MaterialService materialService; // Tu servicio para obtener datos
+    private final MaterialService materialService;
 
     public ReporteService(MaterialService materialService) {
         this.materialService = materialService;
@@ -30,34 +32,36 @@ public class ReporteService {
         crearFecha(workbook, sheet);
         crearEncabezados(workbook, sheet);
 
-        // Obtener datos desde el service de materiales
-        var materiales = materialService.listarResumen();
+        // Obtener datos desde el service de materiales (DTO)
+        List<MaterialResumenDTO> materiales = materialService.listarResumen();
 
-        // Llenar datos
-        int rowNum = 4; // Datos empiezan en fila 5 (índice 4)
-        for (var m : materiales) {
-    Row row = sheet.createRow(rowNum++);
-    row.createCell(0).setCellValue(m.getId());
-    row.createCell(1).setCellValue(m.getNombre());
-    row.createCell(2).setCellValue(m.getDescripcion());
-    row.createCell(3).setCellValue(m.getUnidadMedida());
-    row.createCell(4).setCellValue(m.getCantidad());
+        // Llenar datos a partir de la fila 5 (índice 4)
+        int rowNum = 4;
+        for (MaterialResumenDTO m : materiales) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(m.getId() != null ? m.getId() : 0);
+            row.createCell(1).setCellValue(m.getNombre() != null ? m.getNombre() : ""); // Aquí usas getNombre()
+            row.createCell(2).setCellValue(m.getDescripcion() != null ? m.getDescripcion() : "");
+            row.createCell(3).setCellValue(m.getUnidadMedida() != null ? m.getUnidadMedida() : "");
+            row.createCell(4).setCellValue(m.getCantidad() != null ? m.getCantidad() : 0);
 
-    BigDecimal precio = m.getPrecioUnitario();
-    if (precio != null) {
-        row.createCell(5).setCellValue(precio.doubleValue());
-    } else {
-        row.createCell(5).setCellValue(0.0);
-    }
+            BigDecimal precio = m.getPrecioUnitario();
+            if (precio != null) {
+                row.createCell(5).setCellValue(precio.doubleValue());
+            } else {
+                row.createCell(5).setCellValue(0.0);
+            }
 
-    row.createCell(6).setCellValue(m.getEntradas());
-    row.createCell(7).setCellValue(m.getSalidas());
-    row.createCell(8).setCellValue(m.getCategoria());
-}
+            row.createCell(6).setCellValue(m.getEntradas() != null ? m.getEntradas() : 0);
+            row.createCell(7).setCellValue(m.getSalidas() != null ? m.getSalidas() : 0);
+            row.createCell(8).setCellValue(m.getCategoria() != null ? m.getCategoria() : "");
 
+            // Columna "Acciones" vacía
+            row.createCell(9).setCellValue("");
+        }
 
-        // Ajustar ancho columnas
-        for (int i = 0; i <= 8; i++) {
+        // Ajustar ancho columnas de 0 a 9 (10 columnas)
+        for (int i = 0; i <= 9; i++) {
             sheet.autoSizeColumn(i);
         }
 
@@ -76,7 +80,7 @@ public class ReporteService {
 
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
-        font.setFontHeightInPoints((short)16);
+        font.setFontHeightInPoints((short) 16);
         font.setBold(true);
         font.setColor(IndexedColors.WHITE.getIndex());
         style.setFont(font);
@@ -86,14 +90,18 @@ public class ReporteService {
 
         tituloCell.setCellStyle(style);
 
-        // Merge A1:I1
-        sheet.addMergedRegion(new CellRangeAddress(0,0,0,8));
+        // Merge A1:J1 (columnas 0 a 9)
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
     }
 
     private void crearFecha(Workbook workbook, Sheet sheet) {
         Row fechaRow = sheet.createRow(1);
         Cell fechaCell = fechaRow.createCell(0);
-        String fechaStr = "Fecha de reporte: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+        ZoneId zona = ZoneId.of("America/Mexico_City");
+        String fechaStr = "Fecha de reporte: " +
+                ZonedDateTime.now(zona).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
         fechaCell.setCellValue(fechaStr);
 
         CellStyle style = workbook.createCellStyle();
@@ -105,13 +113,13 @@ public class ReporteService {
 
         fechaCell.setCellStyle(style);
 
-        // Merge A2:I2
-        sheet.addMergedRegion(new CellRangeAddress(1,1,0,8));
+        // Merge A2:J2 (columnas 0 a 9)
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 9));
     }
 
     private void crearEncabezados(Workbook workbook, Sheet sheet) {
-        Row headerRow = sheet.createRow(4); // fila 5
-        String[] headers = {"ID", "Clave", "Descripción", "Unidad", "Cantidad", "Precio", "Entradas", "Salidas", "Categoría"};
+        Row headerRow = sheet.createRow(3); // fila 4 (índice 3)
+        String[] headers = {"ID", "Clave", "Descripción", "Unidad", "Cantidad", "Precio", "Entradas", "Salidas", "Categoría", "Acciones"};
 
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -134,4 +142,9 @@ public class ReporteService {
         }
     }
 }
+
+
+
+
+
 

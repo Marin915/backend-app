@@ -37,17 +37,18 @@ public class MaterialController {
     private static final Logger logger =
             LoggerFactory.getLogger(MaterialController.class);
 
-  private final ReporteService reporteService;
-private final MaterialService materialService;
-private final MovimientoMaterialService movimientoService;
+   private final ReporteService reporteService;
+    private final MaterialService materialService;
+    private final MovimientoMaterialService movimientoService;
 
-public MaterialController(MaterialService materialService,
-                          MovimientoMaterialService movimientoService,
-                          ReporteService reporteService) {
-    this.materialService = materialService;
-    this.movimientoService = movimientoService;
-    this.reporteService = reporteService;
-}
+    public MaterialController(MaterialService materialService,
+                              MovimientoMaterialService movimientoService,
+                              ReporteService reporteService) {
+        this.materialService = materialService;
+        this.movimientoService = movimientoService;
+        this.reporteService = reporteService;
+    }
+
 
     /* =======================
        CRUD MATERIALES
