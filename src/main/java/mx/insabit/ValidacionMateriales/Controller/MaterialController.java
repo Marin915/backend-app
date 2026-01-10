@@ -73,7 +73,7 @@ public MaterialController(MaterialService materialService,
         return ResponseEntity.ok(materialService.listar());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public ResponseEntity<Material> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(materialService.obtenerPorId(id));
     }
@@ -160,31 +160,31 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
 
     @GetMapping("/resumen-todo")
     public ResponseEntity<List<MaterialResumenDTO>> listarResumen() {
-
         logger.info("Entrando a listarResumen()");
-
         List<MaterialResumenDTO> resumen =
                 materialService.listarResumen();
-
         logger.info("Resumen obtenido: {}", resumen.size());
-
         return ResponseEntity.ok(resumen);
     }
     
     
-    @GetMapping("/api/materiales/reporte")
-    public ResponseEntity<byte[]> descargarReporteExcel() throws IOException {
-        byte[] excelBytes = reporteService.generarReporteInventarioExcel();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDisposition(ContentDisposition.builder("attachment")
-            .filename("Reporte_Inventario_Materiales.xlsx")
-            .build());
-
-        return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+ 
+    @GetMapping("/reporte")  // Ruta clara y sin conflicto
+    public ResponseEntity<byte[]> descargarReporteExcel() {
+        try {
+            byte[] excelBytes = reporteService.generarReporteInventarioExcel();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDisposition(ContentDisposition.builder("attachment")
+                    .filename("Reporte_Inventario_Materiales.xlsx")
+                    .build());
+            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(null);
+        }
     }
-    
+
 }
     
    /* private final MaterialService servicio;
