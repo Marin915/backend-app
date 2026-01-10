@@ -3,6 +3,7 @@ package mx.insabit.ValidacionMateriales.Controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,13 +15,17 @@ import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
 //import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Service.MaterialService;
 import mx.insabit.ValidacionMateriales.Service.MovimientoMaterialService;
+import mx.insabit.ValidacionMateriales.Service.ReporteService;
 import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 
 
@@ -32,14 +37,17 @@ public class MaterialController {
     private static final Logger logger =
             LoggerFactory.getLogger(MaterialController.class);
 
-    private final MaterialService materialService;
-    private final MovimientoMaterialService movimientoService;
+  private final ReporteService reporteService;
+private final MaterialService materialService;
+private final MovimientoMaterialService movimientoService;
 
-    public MaterialController(MaterialService materialService,
-                              MovimientoMaterialService movimientoService) {
-        this.materialService = materialService;
-        this.movimientoService = movimientoService;
-    }
+public MaterialController(MaterialService materialService,
+                          MovimientoMaterialService movimientoService,
+                          ReporteService reporteService) {
+    this.materialService = materialService;
+    this.movimientoService = movimientoService;
+    this.reporteService = reporteService;
+}
 
     /* =======================
        CRUD MATERIALES
@@ -162,6 +170,21 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
 
         return ResponseEntity.ok(resumen);
     }
+    
+    
+    @GetMapping("/api/materiales/reporte")
+    public ResponseEntity<byte[]> descargarReporteExcel() throws IOException {
+        byte[] excelBytes = reporteService.generarReporteInventarioExcel();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+            .filename("Reporte_Inventario_Materiales.xlsx")
+            .build());
+
+        return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+    }
+    
 }
     
    /* private final MaterialService servicio;
