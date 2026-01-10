@@ -13,11 +13,15 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "material")
+@SQLDelete(sql = "UPDATE material SET activo = false WHERE id = ?")
+@SQLRestriction("activo = true")
 public class Material {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,14 +41,15 @@ public class Material {
     @Column(length = 100)
     private String categoria;
 
-    private Boolean activo = true;
+    @Column(nullable = false)
+    private boolean activo = true;
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<MovimientoMaterial> movimientos;       
+    private List<MovimientoMaterial> movimientos;
     
     public Material() {
     }

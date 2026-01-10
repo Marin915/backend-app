@@ -61,17 +61,13 @@ public class MaterialServiceImpl implements MaterialService {
                 .orElseThrow(() -> new RuntimeException("Material no encontrado"));
     }
 
-    @Override
-    @Transactional
     public void eliminar(Long id) {
+    Material m = materialRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("No existe"));
+    m.setActivo(false);
+    materialRepository.save(m);
+    }
 
-    Material material = materialRepository.findById(id)
-            .orElseThrow(() ->
-                    new EntityNotFoundException("Material no encontrado con id " + id)
-            );
-
-    materialRepository.delete(material);
-}
     
 
     /* ===== RESUMEN DE INVENTARIO ===== */
