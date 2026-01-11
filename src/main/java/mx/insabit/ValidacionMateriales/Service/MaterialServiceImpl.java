@@ -91,7 +91,7 @@ Integer stock = entradas - salidas;
 
         MaterialResumenDTO dto = new MaterialResumenDTO();
         dto.setId(m.getId());
-        dto.setNombre(m.getClave());
+        dto.setClave(m.getClave());
         dto.setDescripcion(m.getDescripcion());
         dto.setUnidadMedida(m.getUnidadMedida());
         dto.setCantidad(stock);

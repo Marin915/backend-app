@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class MaterialResumenDTO {
     
     private Long id;
-    private String nombre;          // clave o nombre comercial
+    private String clave;          // clave o nombre comercial
     private String descripcion;
     private String unidadMedida;
     private Integer cantidad;       // stock final
@@ -30,13 +30,15 @@ public class MaterialResumenDTO {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getClave() {
+        return clave;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setClave(String clave) {
+        this.clave = clave;
     }
+
+   
 
     public String getDescripcion() {
         return descripcion;

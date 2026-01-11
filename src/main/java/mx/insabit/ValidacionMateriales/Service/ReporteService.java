@@ -40,7 +40,7 @@ public class ReporteService {
         for (MaterialResumenDTO m : materiales) {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(m.getId() != null ? m.getId() : 0);
-            row.createCell(1).setCellValue(m.getNombre() != null ? m.getNombre() : ""); // Aquí usas getNombre()
+            row.createCell(1).setCellValue(m.getClave() != null ? m.getClave() : ""); // Aquí usas getNombre()
             row.createCell(2).setCellValue(m.getDescripcion() != null ? m.getDescripcion() : "");
             row.createCell(3).setCellValue(m.getUnidadMedida() != null ? m.getUnidadMedida() : "");
             row.createCell(4).setCellValue(m.getCantidad() != null ? m.getCantidad() : 0);
