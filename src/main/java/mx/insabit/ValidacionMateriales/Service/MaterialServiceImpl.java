@@ -4,18 +4,11 @@ package mx.insabit.ValidacionMateriales.Service;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
-import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
-import mx.insabit.ValidacionMateriales.Excepciones.NotFoundException;
-import mx.insabit.ValidacionMateriales.MapStruc.MaterialMapper;
-import mx.insabit.ValidacionMateriales.Entity.MaterialesEntity;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
-import mx.insabit.ValidacionMateriales.Repository.MaterialesRepository;
 import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
 import org.springframework.stereotype.Service;
 

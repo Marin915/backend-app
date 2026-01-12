@@ -1,4 +1,3 @@
-
 package mx.insabit.ValidacionMateriales.DTO;
 
 import java.math.BigDecimal;
@@ -17,7 +16,7 @@ public class MaterialStockDTO {
 
     public MaterialStockDTO() {
     }
-
+    
     public MaterialStockDTO(Long id, String clave, String descripcion, String unidadMedida, Integer entradas, Integer salidas, Integer cantidad, BigDecimal precioUnitario, String categoria) {
         this.id = id;
         this.clave = clave;

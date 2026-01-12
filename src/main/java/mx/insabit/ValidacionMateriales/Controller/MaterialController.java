@@ -7,11 +7,13 @@ import java.io.IOException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.Service.CasaService;
 //import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Service.MaterialService;
 import mx.insabit.ValidacionMateriales.Service.MovimientoMaterialService;
@@ -38,25 +40,21 @@ public class MaterialController {
             LoggerFactory.getLogger(MaterialController.class);
 
    private final ReporteService reporteService;
+   private final CasaService casaService;
     private final MaterialService materialService;
     private final MovimientoMaterialService movimientoService;
 
     public MaterialController(MaterialService materialService,
                               MovimientoMaterialService movimientoService,
-                              ReporteService reporteService) {
+                              ReporteService reporteService, CasaService casaService) {
         this.materialService = materialService;
         this.movimientoService = movimientoService;
         this.reporteService = reporteService;
+        this.casaService = casaService;
     }
-
-
-    /* =======================
-       CRUD MATERIALES
-       ======================= */
 
     @PostMapping
     public ResponseEntity<Material> crear(@RequestBody MaterialDTO dto) {
-
     Material material = new Material();
     material.setClave(dto.getClave());
     material.setDescripcion(dto.getDescripcion());
@@ -67,7 +65,6 @@ public class MaterialController {
 
     return ResponseEntity.ok(materialService.guardar(material));
 }
-
 
     @GetMapping
     public ResponseEntity<List<Material>> listar() {
@@ -118,19 +115,10 @@ public ResponseEntity<?> eliminar(@PathVariable Long id) {
     }
 }
 
-
-    /* =======================
-       STOCK
-       ======================= */
-
     @GetMapping("/{id}/stock")
     public ResponseEntity<Integer> stock(@PathVariable Long id) {
         return ResponseEntity.ok(movimientoService.obtenerStock(id));
     }
-
-    /* =======================
-       MOVIMIENTOS (ENTRADA / SALIDA)
-       ======================= */
 
  @PostMapping("/{id}/movimientos")
 public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
@@ -155,10 +143,7 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
 
     return ResponseEntity.ok(response);
 }
-    /* =======================
-       RESUMEN INVENTARIO
-       ======================= */
-
+   
     @GetMapping("/resumen-todo")
     public ResponseEntity<List<MaterialResumenDTO>> listarResumen() {
         logger.info("Entrando a listarResumen()");
@@ -185,9 +170,15 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
             return ResponseEntity.badRequest().body(null);
         }
     }
-
-}
     
+    @GetMapping("/{id}/detalle")
+    public ResponseEntity<CasaDetalleDTO> obtenerDetalle(@PathVariable Long id) {
+        logger.info("Consultando detalle de casa id {}", id);
+        CasaDetalleDTO detalle = casaService.obtenerDetalleCasa(id);
+        return ResponseEntity.ok(detalle);
+    }
+
+} 
    /* private final MaterialService servicio;
 
     public MaterialController(MaterialService servicio) {

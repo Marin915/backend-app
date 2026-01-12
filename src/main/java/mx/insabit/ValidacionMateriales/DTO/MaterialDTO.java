@@ -1,4 +1,3 @@
-
 package mx.insabit.ValidacionMateriales.DTO;
 
 import jakarta.validation.constraints.NotBlank;
@@ -6,11 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
-
 public class MaterialDTO {
   
-   private Long id; // solo para edición
-
+    private Long id; // solo para edición
     @NotBlank(message = "La clave es obligatoria")
     @Size(max = 50)
     private String clave;
@@ -85,7 +82,4 @@ public class MaterialDTO {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
-    
-    
 }

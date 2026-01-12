@@ -1,5 +1,3 @@
-
-
 package mx.insabit.ValidacionMateriales.Entity;
 
 import jakarta.persistence.Column;
@@ -93,8 +91,5 @@ public class Casa {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-    
-    
-    
+    }    
 }

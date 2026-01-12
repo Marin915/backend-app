@@ -2,9 +2,7 @@
 package mx.insabit.ValidacionMateriales.Service;
 
 import java.util.List;
-import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
-import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 
 
