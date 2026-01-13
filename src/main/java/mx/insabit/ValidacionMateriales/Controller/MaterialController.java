@@ -182,34 +182,26 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
     }
     
  // Paginacion 
-   // PAGINACIÓN PROFESIONAL
-@GetMapping("/paginados")
-public ResponseEntity<Map<String, Object>> obtenerPaginas(
+    @GetMapping("/paginados")
+    public ResponseEntity<Map<String, Object>> obtenerPaginas(
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "10") int size) {
-
-    if (page < 1) page = 1;
-
+        if (page < 1) page = 1;
     // 👇 SOLO validar size si NO es -1
-    if (size != -1 && (size < 1 || size > 100)) {
+        if (size != -1 && (size < 1 || size > 100)) {
         size = 10;
-    }
-
-    Page<Material> archivosPage =
+     }
+        Page<Material> archivosPage =
             materialService.obtenerPaginas(page, size);
-
-    Map<String, Object> response = Map.of(
+        Map<String, Object> response = Map.of(
             "archivos", archivosPage.getContent(),
             "totalItems", archivosPage.getTotalElements(),
             "totalPages", archivosPage.getTotalPages(),
             "currentPage", archivosPage.getNumber() + 1
-    );
-
-    return ResponseEntity.ok(response);
-}
-
-
-} 
+         );
+         return ResponseEntity.ok(response);
+        }
+    } 
    /* private final MaterialService servicio;
 
     public MaterialController(MaterialService servicio) {
