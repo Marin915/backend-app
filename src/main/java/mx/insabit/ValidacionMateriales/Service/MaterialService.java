@@ -4,6 +4,7 @@ package mx.insabit.ValidacionMateriales.Service;
 import java.util.List;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
+import org.springframework.data.domain.Page;
 
 
 public interface MaterialService {
@@ -24,6 +25,8 @@ public interface MaterialService {
 
     void eliminar(Long id);
     
+     Page<Material> obtenerPaginas(int page, int size);
+
    /* MaterialesDTO crear(MaterialesDTO dto);
 
     MaterialesDTO obtener(Long id);

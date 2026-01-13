@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
@@ -16,6 +17,7 @@ import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
 import mx.insabit.ValidacionMateriales.Service.CasaService;
 //import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Service.MaterialService;
+import mx.insabit.ValidacionMateriales.Service.MaterialServiceImpl;
 import mx.insabit.ValidacionMateriales.Service.MovimientoMaterialService;
 import mx.insabit.ValidacionMateriales.Service.ReporteService;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -177,6 +180,30 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
         CasaDetalleDTO detalle = casaService.obtenerDetalleCasa(id);
         return ResponseEntity.ok(detalle);
     }
+    
+ // Paginacion 
+   // PAGINACIÓN PROFESIONAL
+@GetMapping("/paginados")
+public ResponseEntity<Map<String, Object>> obtenerPaginas(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+    if (page < 1) page = 1;
+    if (size < 1 || size > 100) size = 10;
+
+    // 👉 USAR LA INTERFAZ (NO LA IMPLEMENTACIÓN)
+    Page<Material> archivosPage =
+            materialService.obtenerPaginas(page, size);
+
+    Map<String, Object> response = Map.of(
+            "archivos", archivosPage.getContent(),
+            "totalItems", archivosPage.getTotalElements(),
+            "totalPages", archivosPage.getTotalPages(),
+            "currentPage", archivosPage.getNumber() + 1
+    );
+
+    return ResponseEntity.ok(response);
+}
 
 } 
    /* private final MaterialService servicio;

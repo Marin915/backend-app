@@ -10,6 +10,11 @@ import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
+import mx.insabit.ValidacionMateriales.Repository.PaginacionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +22,8 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final MaterialRepository materialRepository;
     private final MovimientoMaterialRepository movimientoRepository;
+    private PaginacionRepository paginacionRepository;
+    
 
     public MaterialServiceImpl(MaterialRepository materialRepository,
                                MovimientoMaterialRepository movimientoRepository) {
@@ -99,6 +106,29 @@ Integer stock = entradas - salidas;
     return lista;
 }
 
+// Método para obtener los archivos con paginación
+ public Page<Material> obtenerPaginas(int page, int size) {
+
+        // Traer TODO sin paginación
+        if (size == -1) {
+            return paginacionRepository.findAll(Pageable.unpaged());
+        }
+
+        // Seguridad básica
+        if (page < 1) page = 1;
+        if (size < 1 || size > 100) size = 10;
+
+        // Spring empieza en 0
+        int adjustedPage = page - 1;
+
+        Pageable pageable = PageRequest.of(
+                adjustedPage,
+                size,
+                Sort.by("idPaginacion").ascending()
+        );
+
+        return paginacionRepository.findAll(pageable);
+    }
 
 
   /*
