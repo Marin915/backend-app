@@ -181,7 +181,7 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
         return ResponseEntity.ok(detalle);
     }
     
- // Paginacion 
+    // Paginacion 
     @GetMapping("/paginados")
     public ResponseEntity<Map<String, Object>> obtenerPaginas(
         @RequestParam(defaultValue = "1") int page,

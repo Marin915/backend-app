@@ -108,7 +108,7 @@ Integer stock = entradas - salidas;
 
 public Page<Material> obtenerPaginas(int page, int size) {
 
-    // Traer TODO sin paginación
+    // Traer todos sin paginación
     if (size == -1) {
         return paginacionRepository.findAll(Pageable.unpaged());
     }
@@ -118,11 +118,12 @@ public Page<Material> obtenerPaginas(int page, int size) {
     Pageable pageable = PageRequest.of(
             adjustedPage,
             size,
-            Sort.by("idPaginacion").ascending() // 👈 revisa bien el nombre
+            Sort.by("id").ascending() // ✅ CAMPO REAL
     );
 
     return paginacionRepository.findAll(pageable);
 }
+
 
 
 
