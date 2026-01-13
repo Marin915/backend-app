@@ -189,9 +189,12 @@ public ResponseEntity<Map<String, Object>> obtenerPaginas(
         @RequestParam(defaultValue = "10") int size) {
 
     if (page < 1) page = 1;
-    if (size < 1 || size > 100) size = 10;
 
-    // 👉 USAR LA INTERFAZ (NO LA IMPLEMENTACIÓN)
+    // 👇 SOLO validar size si NO es -1
+    if (size != -1 && (size < 1 || size > 100)) {
+        size = 10;
+    }
+
     Page<Material> archivosPage =
             materialService.obtenerPaginas(page, size);
 
@@ -204,6 +207,7 @@ public ResponseEntity<Map<String, Object>> obtenerPaginas(
 
     return ResponseEntity.ok(response);
 }
+
 
 } 
    /* private final MaterialService servicio;
