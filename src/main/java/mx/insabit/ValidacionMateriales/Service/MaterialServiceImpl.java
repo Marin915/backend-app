@@ -22,13 +22,17 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final MaterialRepository materialRepository;
     private final MovimientoMaterialRepository movimientoRepository;
-    private PaginacionRepository paginacionRepository;
+    private final PaginacionRepository paginacionRepository; // ✅ FINAL
+
     
 
     public MaterialServiceImpl(MaterialRepository materialRepository,
-                               MovimientoMaterialRepository movimientoRepository) {
+                               MovimientoMaterialRepository movimientoRepository,
+                               PaginacionRepository paginacionRepository) {
         this.materialRepository = materialRepository;
         this.movimientoRepository = movimientoRepository;
+        this.paginacionRepository = paginacionRepository;
+
     }
 
     
@@ -106,23 +110,23 @@ Integer stock = entradas - salidas;
     return lista;
 }
 
-public Page<Material> obtenerPaginas(int page, int size) {
+        @Override
+        public Page<Material> obtenerPaginas(int page, int size) {
 
-    // Traer todos sin paginación
-    if (size == -1) {
-        return paginacionRepository.findAll(Pageable.unpaged());
+        if (size == -1) {
+            return paginacionRepository.findAll(Pageable.unpaged());
+        }
+
+        int adjustedPage = Math.max(page - 1, 0);
+
+        Pageable pageable = PageRequest.of(
+                adjustedPage,
+                size,
+                Sort.by("id").ascending()
+        );
+
+        return paginacionRepository.findAll(pageable);
     }
-
-    int adjustedPage = Math.max(page - 1, 0);
-
-    Pageable pageable = PageRequest.of(
-            adjustedPage,
-            size,
-            Sort.by("id").ascending() // ✅ CAMPO REAL
-    );
-
-    return paginacionRepository.findAll(pageable);
-}
 
 
 
