@@ -107,28 +107,18 @@ Integer stock = entradas - salidas;
 }
 
 // Método para obtener los archivos con paginación
- public Page<Material> obtenerPaginas(int page, int size) {
-
-        // Traer TODO sin paginación
-        if (size == -1) {
-            return paginacionRepository.findAll(Pageable.unpaged());
-        }
-
-        // Seguridad básica
-        if (page < 1) page = 1;
-        if (size < 1 || size > 100) size = 10;
-
-        // Spring empieza en 0
-        int adjustedPage = page - 1;
-
-        Pageable pageable = PageRequest.of(
-                adjustedPage,
-                size,
-                Sort.by("idPaginacion").ascending()
-        );
-
-        return paginacionRepository.findAll(pageable);
+public Page<Material> obtenerPaginas(int page, int size) {
+    // Si el tamaño es -1, devolver todos los registros sin paginación
+    if (size == -1) {
+        return paginacionRepository.findAll(Pageable.unpaged()); // Devuelve todos sin paginación
     }
+    // Asegúrate de que la página no sea menor que 0
+    int adjustedPage = Math.max(page - 1, 0); // Asegura que la página nunca sea menor que 0
+    // Crear el Pageable con el índice ajustado
+    Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("idPagiancion").ascending());
+    // Retorna los archivos con la paginación y ordenamiento por 'idBitCargaArchivo'
+    return paginacionRepository.findAll(pageable);  
+}
 
 
   /*
