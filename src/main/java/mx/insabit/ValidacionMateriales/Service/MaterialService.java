@@ -29,6 +29,9 @@ public interface MaterialService {
      
      void eliminarUltimoMovimiento(Long materialId);
 
+     
+    // ✅ Paginación con RESUMEN (stock, entradas y salidas)
+    Page<MaterialResumenDTO> obtenerPaginasResumen(int page, int size);
    /* MaterialesDTO crear(MaterialesDTO dto);
 
     MaterialesDTO obtener(Long id);

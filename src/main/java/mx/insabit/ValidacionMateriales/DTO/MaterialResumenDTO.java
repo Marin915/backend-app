@@ -15,6 +15,9 @@ public class MaterialResumenDTO {
     private BigDecimal precioUnitario;
     private String categoria;
 
+    
+    
+
     public Long getId() {
         return id;
     }

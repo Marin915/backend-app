@@ -112,6 +112,35 @@ Integer stock = entradas - salidas;
     return lista;
 }
 
+    
+    public Page<MaterialResumenDTO> obtenerPaginasResumen(int page, int size) {
+
+    Page<Material> materiales = obtenerPaginas(page, size);
+
+    return materiales.map(material -> {
+
+        Integer entradas = movimientoRepository.obtenerEntradas(material.getId());
+        Integer salidas  = movimientoRepository.obtenerSalidas(material.getId());
+
+        int ent = entradas != null ? entradas : 0;
+        int sal = salidas  != null ? salidas  : 0;
+
+        MaterialResumenDTO dto = new MaterialResumenDTO();
+        dto.setId(material.getId());
+        dto.setClave(material.getClave());
+        dto.setDescripcion(material.getDescripcion());
+        dto.setUnidadMedida(material.getUnidadMedida());
+        dto.setCantidad(ent - sal);
+        dto.setEntradas(ent);
+        dto.setSalidas(sal);
+        dto.setPrecioUnitario(material.getPrecioUnitario());
+        dto.setCategoria(material.getCategoria());
+
+        return dto;
+    });
+}
+
+
         @Override
         public Page<Material> obtenerPaginas(int page, int size) {
         if (size == -1) {
