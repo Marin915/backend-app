@@ -3,6 +3,7 @@
 package mx.insabit.ValidacionMateriales.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import mx.insabit.ValidacionMateriales.DTO.MaterialStockDTO;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,6 +49,9 @@ Integer obtenerEntradas(@Param("materialId") Long materialId);
 """)
 Integer obtenerSalidas(@Param("materialId") Long materialId);
 
+ //  Obtiene el último movimiento por material (ordenado por fecha)
+    Optional<MovimientoMaterial>
+    findTopByMaterialIdOrderByFechaDesc(Long materialId);
 
     
 }

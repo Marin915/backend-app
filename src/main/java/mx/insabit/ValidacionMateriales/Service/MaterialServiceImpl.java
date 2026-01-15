@@ -4,10 +4,12 @@ package mx.insabit.ValidacionMateriales.Service;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
+import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.PaginacionRepository;
@@ -112,21 +114,28 @@ Integer stock = entradas - salidas;
 
         @Override
         public Page<Material> obtenerPaginas(int page, int size) {
-
         if (size == -1) {
             return paginacionRepository.findAll(Pageable.unpaged());
         }
-
         int adjustedPage = Math.max(page - 1, 0);
-
         Pageable pageable = PageRequest.of(
                 adjustedPage,
                 size,
                 Sort.by("id").ascending()
         );
-
         return paginacionRepository.findAll(pageable);
     }
+
+       @Transactional
+        public void eliminarUltimoMovimiento(Long materialId) {
+        MovimientoMaterial ultimo =
+            movimientoRepository
+                .findTopByMaterialIdOrderByFechaDesc(materialId)
+                .orElseThrow(() ->
+                new RuntimeException("No hay movimientos para este material"));
+            // ✅ Solo eliminamos el movimiento
+            movimientoRepository.delete(ultimo);
+        }
 
 
 

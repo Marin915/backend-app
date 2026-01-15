@@ -26,6 +26,8 @@ public interface MaterialService {
     void eliminar(Long id);
     
      Page<Material> obtenerPaginas(int page, int size);
+     
+     void eliminarUltimoMovimiento(Long materialId);
 
    /* MaterialesDTO crear(MaterialesDTO dto);
 

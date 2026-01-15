@@ -201,7 +201,14 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
          );
          return ResponseEntity.ok(response);
         }
-    } 
+    
+          @DeleteMapping("/{id}/movimientos/ultimo")
+           public ResponseEntity<Void> deshacerUltimoMovimiento(@PathVariable Long id) {
+             materialService.eliminarUltimoMovimiento(id);
+              return ResponseEntity.noContent().build();
+        }
+     } 
+
    /* private final MaterialService servicio;
 
     public MaterialController(MaterialService servicio) {
