@@ -186,27 +186,23 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
 public ResponseEntity<Map<String, Object>> obtenerPaginas(
     @RequestParam(defaultValue = "1") int page,
     @RequestParam(defaultValue = "10") int size) {
-
     if (page < 1) page = 1;
 
     // 👇 SOLO validar size si NO es -1
     if (size != -1 && (size < 1 || size > 100)) {
         size = 10;
     }
-
     Page<MaterialResumenDTO> archivosPage =
         materialService.obtenerPaginasResumen(page, size);
-
     Map<String, Object> response = Map.of(
         "archivos", archivosPage.getContent(),
         "totalItems", archivosPage.getTotalElements(),
         "totalPages", archivosPage.getTotalPages(),
         "currentPage", archivosPage.getNumber() + 1
     );
-
     return ResponseEntity.ok(response);
 }
-}
+
     
   /*  // Paginacion 
     @GetMapping("/paginados")
@@ -228,15 +224,17 @@ public ResponseEntity<Map<String, Object>> obtenerPaginas(
          );
          return ResponseEntity.ok(response);
         }
-    
+    */
           @DeleteMapping("/{id}/movimientos/ultimo")
            public ResponseEntity<Void> deshacerUltimoMovimiento(@PathVariable Long id) {
              materialService.eliminarUltimoMovimiento(id);
               return ResponseEntity.noContent().build();
-        }
-     } 
-*/
-   /* private final MaterialService servicio;
+
+
+           }
+}
+/*
+   private final MaterialService servicio;
 
     public MaterialController(MaterialService servicio) {
         this.servicio = servicio;
