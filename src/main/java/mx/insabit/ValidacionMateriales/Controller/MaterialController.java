@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
+import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.SalidaCasaDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
@@ -258,8 +260,8 @@ public ResponseEntity<?> registrarSalidaCasa(
     
 }
 
-    @PostMapping("/crear-casa")
-    public ResponseEntity<Casa> crear(@RequestBody Casa casa) {
+   @PostMapping("/crear-casa")
+public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
 
     if (casa.getModelo() == null || casa.getModelo().getId() == null) {
         throw new ResponseStatusException(
@@ -278,14 +280,35 @@ public ResponseEntity<?> registrarSalidaCasa(
 
     Casa guardada = casaRepository.save(casa);
 
-    // 👇 opcional, solo informativo
-modelo.setTotalCasas(
-    modelo.getTotalCasas() == null ? 1 : modelo.getTotalCasas() + 1
-);
+    modelo.setTotalCasas(
+        modelo.getTotalCasas() == null ? 1 : modelo.getTotalCasas() + 1
+    );
     modeloCasaRepository.save(modelo);
 
-    return ResponseEntity.ok(guardada);
+    CasaDTO dto = toCasaDTO(guardada);
+
+    return ResponseEntity.ok(dto);
 }
+
+private CasaDTO toCasaDTO(Casa casa) {
+    CasaDTO dto = new CasaDTO();
+    dto.setId(casa.getId());
+    dto.setNombre(casa.getNombre());
+    dto.setUbicacion(casa.getUbicacion());
+    dto.setProgreso(casa.getProgreso());
+    dto.setFechaCreacion(casa.getFechaCreacion());
+
+    ModeloCasaSimpleDTO modeloDTO = new ModeloCasaSimpleDTO();
+    modeloDTO.setId(casa.getModelo().getId());
+    modeloDTO.setNombre(casa.getModelo().getNombre());
+
+    dto.setModelo(modeloDTO);
+
+    return dto;
+}
+
+
+
 
 
     

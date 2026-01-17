@@ -4,7 +4,10 @@
  */
 package mx.insabit.ValidacionMateriales.MapStruc;
 
+import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
+import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 
 /**
@@ -34,5 +37,22 @@ public class MaterialMappers {
         material.setCategoria(dto.getCategoria());
         material.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
         return material;
+    }
+    
+      public CasaDTO toDTO(Casa casa) {
+        CasaDTO dto = new CasaDTO();
+        dto.setId(casa.getId());
+        dto.setNombre(casa.getNombre());
+        dto.setUbicacion(casa.getUbicacion());
+        dto.setProgreso(casa.getProgreso());
+        dto.setFechaCreacion(casa.getFechaCreacion());
+
+        ModeloCasaSimpleDTO modeloDTO = new ModeloCasaSimpleDTO();
+        modeloDTO.setId(casa.getModelo().getId());
+        modeloDTO.setNombre(casa.getModelo().getNombre());
+
+        dto.setModelo(modeloDTO);
+
+        return dto;
     }
 }

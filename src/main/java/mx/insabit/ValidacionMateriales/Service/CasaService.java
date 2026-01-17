@@ -2,8 +2,10 @@ package mx.insabit.ValidacionMateriales.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
+import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.MaterialCasa;
@@ -94,5 +96,23 @@ public class CasaService {
         return materialCasaRepository.save(mc);
     }
   
+      public CasaDTO toCasaDTO(Casa casa) {
+    CasaDTO dto = new CasaDTO();
+    dto.setId(casa.getId());
+    dto.setNombre(casa.getNombre());
+    dto.setUbicacion(casa.getUbicacion());
+    dto.setProgreso(casa.getProgreso());
+    dto.setFechaCreacion(casa.getFechaCreacion());
+
+    ModeloCasaSimpleDTO modeloDTO = new ModeloCasaSimpleDTO();
+    modeloDTO.setId(casa.getModelo().getId());
+    modeloDTO.setNombre(casa.getModelo().getNombre());
+
+    dto.setModelo(modeloDTO);
+
+    return dto;
+}
+
+      
 }
 
