@@ -42,11 +42,12 @@ public class CasaService {
         Casa casa = casaRepository.findById(casaId)
                 .orElseThrow(() -> new RuntimeException("Casa no encontrada"));
 
-       String nombreModelo = "Sin modelo";
+     ModeloCasa modelo = casa.getModelo();
 
-if (casa.getModelo() != null) {
-    nombreModelo = casa.getModelo().getNombre();
-}
+String nombreModelo = (modelo != null)
+    ? modelo.getNombre()
+    : "Sin modelo";
+
 
 
         List<MaterialCasaDTO> materiales =
