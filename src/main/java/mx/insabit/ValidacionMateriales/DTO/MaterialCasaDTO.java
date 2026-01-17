@@ -22,6 +22,11 @@ public class MaterialCasaDTO {
         this.usado = usado;
     }
 
+    public MaterialCasaDTO() {
+    }
+
+  
+
     public Long getId() {
         return id;
     }

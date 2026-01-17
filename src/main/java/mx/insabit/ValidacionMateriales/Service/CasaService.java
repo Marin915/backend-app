@@ -135,5 +135,30 @@ public class CasaService {
 }
  
 
-      
+       public List<CasaDTO> listarTodasCasas() {
+        List<Casa> casas = casaRepository.findAll();
+        return casas.stream().map(this::toCasaDTO).collect(Collectors.toList());
+    }
+ 
+       
+   public List<MaterialCasaDTO> listarMaterialesPorCasa(Long casaId) {
+    List<MaterialCasa> materiales = materialCasaRepository.findByCasaId(casaId);
+    return materiales.stream().map(this::toDTO).collect(Collectors.toList());
+}
+
+private MaterialCasaDTO toDTO(MaterialCasa materialCasa) {
+    MaterialCasaDTO dto = new MaterialCasaDTO();
+    dto.setId(materialCasa.getId());
+
+    // Aquí accedes a la entidad material relacionada para obtener el nombre
+    dto.setNombre(materialCasa.getMaterial().getDescripcion()); // o getClave()
+
+    dto.setUnidad(materialCasa.getMaterial().getUnidadMedida()); // o el getter correcto de unidad
+
+    dto.setRequerido(materialCasa.getCantidadPresupuestada());
+    dto.setUsado(materialCasa.getSalidas());
+
+    return dto;
+}
+
 }

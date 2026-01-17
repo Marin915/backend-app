@@ -12,6 +12,7 @@ import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialRequest;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
+import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
@@ -315,6 +316,18 @@ public ResponseEntity<AsignacionMaterialDTO> asignarMaterial(@RequestBody @Valid
     return ResponseEntity.ok(dto);
 }
 
+
+@GetMapping("/casas")
+public ResponseEntity<List<CasaDTO>> listarCasas() {
+    List<CasaDTO> casas = casaService.listarTodasCasas();
+    return ResponseEntity.ok(casas);
+}
+
+@GetMapping("/casas/{id}/materiales")
+public ResponseEntity<List<MaterialCasaDTO>> obtenerMaterialesPorCasa(@PathVariable Long id) {
+    List<MaterialCasaDTO> materiales = casaService.listarMaterialesPorCasa(id);
+    return ResponseEntity.ok(materiales);
+}
  
   /*  // Paginacion 
     @GetMapping("/paginados")
