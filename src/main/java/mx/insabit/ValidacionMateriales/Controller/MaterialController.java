@@ -37,6 +37,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.server.ResponseStatusException;
 
 
 
@@ -261,18 +262,31 @@ public ResponseEntity<?> registrarSalidaCasa(
 public ResponseEntity<Casa> crear(@RequestBody Casa casa) {
 
     if (casa.getModelo() == null || casa.getModelo().getId() == null) {
-        throw new RuntimeException("El modelo es obligatorio");
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "El modelo es obligatorio"
+        );
     }
 
     ModeloCasa modelo = modeloCasaRepository
-            .findById(casa.getModelo().getId())
-            .orElseThrow(() -> new RuntimeException("Modelo no encontrado"));
+        .findById(casa.getModelo().getId())
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "Modelo no encontrado"
+        ));
 
     casa.setModelo(modelo);
     casa.setProgreso(0);
 
-    return ResponseEntity.ok(casaRepository.save(casa));
+    Casa guardada = casaRepository.save(casa);
+
+    // 👇 opcional, solo informativo
+    modelo.setTotalCasas(modelo.getTotalCasas() + 1);
+    modeloCasaRepository.save(modelo);
+
+    return ResponseEntity.ok(guardada);
 }
+
 
     
     @PostMapping("/asignar-material")
