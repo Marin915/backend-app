@@ -13,8 +13,12 @@ import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.SalidaCasaDTO;
+import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
+import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.Repository.CasaRepository;
+import mx.insabit.ValidacionMateriales.Repository.ModeloCasaRepository;
 import mx.insabit.ValidacionMateriales.Service.CasaService;
 import mx.insabit.ValidacionMateriales.Service.MaterialCasaService;
 //import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
@@ -49,6 +53,10 @@ public class MaterialController {
     private final MaterialService materialService;
     private final MovimientoMaterialService movimientoService;
     private final MaterialCasaService materialCasaService;
+  
+    
+    private final CasaRepository casaRepository;
+    private final ModeloCasaRepository modeloCasaRepository;
 
 
 public MaterialController(
@@ -56,13 +64,17 @@ public MaterialController(
         MovimientoMaterialService movimientoService,
         ReporteService reporteService,
         CasaService casaService,
-        MaterialCasaService materialCasaService
+        MaterialCasaService materialCasaService,
+        CasaRepository casaRepository,
+        ModeloCasaRepository modeloCasaRepository
 ) {
     this.materialService = materialService;
     this.movimientoService = movimientoService;
     this.reporteService = reporteService;
     this.casaService = casaService;
     this.materialCasaService = materialCasaService;
+    this.casaRepository = casaRepository;
+    this.modeloCasaRepository = modeloCasaRepository;
 }
 
 
@@ -240,8 +252,35 @@ public ResponseEntity<?> registrarSalidaCasa(
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", e.getMessage()));
     }
+    
+    
+    
 }
 
+    @PostMapping("/crear-casa")
+    public ResponseEntity<Casa> crear(@RequestBody Casa casa) {
+
+        ModeloCasa modelo = modeloCasaRepository.findById(
+            casa.getModelo().getId()
+        ).orElseThrow(() -> new RuntimeException("Modelo no encontrado"));
+
+        casa.setModelo(modelo);
+        casa.setProgreso(0);
+
+        return ResponseEntity.ok(casaRepository.save(casa));
+    }
+    
+    @PostMapping("/asignar-material")
+    public ResponseEntity<?> asignarMaterial(@RequestBody Map<String, Object> body) {
+
+    Long casaId = ((Number) body.get("casaId")).longValue();
+    Long materialId = ((Number) body.get("materialId")).longValue();
+    int requerido = ((Number) body.get("requerido")).intValue();
+
+    return ResponseEntity.ok(
+        casaService.asignarMaterial(casaId, materialId, requerido)
+    );
+    }
     
   /*  // Paginacion 
     @GetMapping("/paginados")

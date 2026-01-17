@@ -172,7 +172,7 @@ Integer stock = entradas - salidas;
         }
 
 
-
+        
   /*
     private final MaterialesRepository repo;
     private final MaterialMapper mapper;
