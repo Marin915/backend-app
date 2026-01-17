@@ -4,6 +4,7 @@
  */
 package mx.insabit.ValidacionMateriales.Service;
 
+import java.util.List;
 import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
 import mx.insabit.ValidacionMateriales.Repository.ModeloCasaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,15 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearSiNoExiste(String nombre, String descripcion) {
-
-        if (!modeloCasaRepository.findByNombre(nombre).isPresent()) {
-            ModeloCasa modelo = new ModeloCasa();
-            modelo.setNombre(nombre);
-            modelo.setDescripcion(descripcion);
-            modelo.setTotalCasas(0);
-            modeloCasaRepository.save(modelo);
-        }
+    List<ModeloCasa> modelos = modeloCasaRepository.findByNombre(nombre);
+    if (modelos.isEmpty()) {
+        ModeloCasa modelo = new ModeloCasa();
+        modelo.setNombre(nombre);
+        modelo.setDescripcion(descripcion);
+        modelo.setTotalCasas(0);
+        modeloCasaRepository.save(modelo);
     }
 }
+}
+    
+

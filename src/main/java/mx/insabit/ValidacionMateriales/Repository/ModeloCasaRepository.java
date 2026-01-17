@@ -1,6 +1,7 @@
 
 package mx.insabit.ValidacionMateriales.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ModeloCasaRepository extends JpaRepository<ModeloCasa, Long>{
     
-    Optional<ModeloCasa> findByNombre(String nombre);
+        // Cambiar a:
+        List<ModeloCasa> findByNombre(String nombre);
     
 }
