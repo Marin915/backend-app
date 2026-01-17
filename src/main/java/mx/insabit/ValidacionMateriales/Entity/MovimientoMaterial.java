@@ -4,6 +4,8 @@ package mx.insabit.ValidacionMateriales.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,8 +33,8 @@ public class MovimientoMaterial {
     @JsonIgnore
     private Casa casa; // solo se usa en SALIDAS
 
-    @Column(nullable = false, length = 10)
-    private String tipo; // ENTRADA o SALIDA
+     @Enumerated(EnumType.STRING)
+    private TipoMovimiento tipo;
 
     @Column(nullable = false)
     private Integer cantidad;
@@ -42,13 +44,15 @@ public class MovimientoMaterial {
     public MovimientoMaterial() {
     }
 
-    public MovimientoMaterial(Long id, Material material, Casa casa, String tipo, Integer cantidad) {
+    public MovimientoMaterial(Long id, Material material, Casa casa, TipoMovimiento tipo, Integer cantidad) {
         this.id = id;
         this.material = material;
         this.casa = casa;
         this.tipo = tipo;
         this.cantidad = cantidad;
     }
+
+   
 
     public Long getId() {
         return id;
@@ -74,14 +78,15 @@ public class MovimientoMaterial {
         this.casa = casa;
     }
 
-    public String getTipo() {
+    public TipoMovimiento getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoMovimiento tipo) {
         this.tipo = tipo;
     }
 
+ 
     public Integer getCantidad() {
         return cantidad;
     }

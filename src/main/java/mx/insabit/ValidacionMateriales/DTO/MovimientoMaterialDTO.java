@@ -3,13 +3,14 @@ package mx.insabit.ValidacionMateriales.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import mx.insabit.ValidacionMateriales.Entity.TipoMovimiento;
 
 
 
 public class MovimientoMaterialDTO {
     
     private Long id;
-    private String tipo;
+    private TipoMovimiento tipo; // 👈 USAR ENUM
     private Integer cantidad;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fecha;
@@ -33,13 +34,15 @@ public class MovimientoMaterialDTO {
         this.id = id;
     }
 
-    public String getTipo() {
+    public TipoMovimiento getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoMovimiento tipo) {
         this.tipo = tipo;
     }
+
+  
 
     public Integer getCantidad() {
         return cantidad;

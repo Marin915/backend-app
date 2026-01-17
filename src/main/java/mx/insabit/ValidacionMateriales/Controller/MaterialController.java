@@ -12,9 +12,11 @@ import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.SalidaCasaDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
 import mx.insabit.ValidacionMateriales.Service.CasaService;
+import mx.insabit.ValidacionMateriales.Service.MaterialCasaService;
 //import mx.insabit.ValidacionMateriales.DTO.MaterialesDTO;
 import mx.insabit.ValidacionMateriales.Service.MaterialService;
 import mx.insabit.ValidacionMateriales.Service.MaterialServiceImpl;
@@ -46,15 +48,23 @@ public class MaterialController {
    private final CasaService casaService;
     private final MaterialService materialService;
     private final MovimientoMaterialService movimientoService;
+    private final MaterialCasaService materialCasaService;
 
-    public MaterialController(MaterialService materialService,
-                              MovimientoMaterialService movimientoService,
-                              ReporteService reporteService, CasaService casaService) {
-        this.materialService = materialService;
-        this.movimientoService = movimientoService;
-        this.reporteService = reporteService;
-        this.casaService = casaService;
-    }
+
+public MaterialController(
+        MaterialService materialService,
+        MovimientoMaterialService movimientoService,
+        ReporteService reporteService,
+        CasaService casaService,
+        MaterialCasaService materialCasaService
+) {
+    this.materialService = materialService;
+    this.movimientoService = movimientoService;
+    this.reporteService = reporteService;
+    this.casaService = casaService;
+    this.materialCasaService = materialCasaService;
+}
+
 
     @PostMapping
     public ResponseEntity<Material> crear(@RequestBody MaterialDTO dto) {
@@ -123,7 +133,7 @@ public ResponseEntity<?> eliminar(@PathVariable Long id) {
         return ResponseEntity.ok(movimientoService.obtenerStock(id));
     }
 
- @PostMapping("/{id}/movimientos")
+@PostMapping("/{id}/movimientos")
 public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
         @PathVariable Long id,
         @RequestBody MovimientoMaterialDTO dto) {
@@ -132,20 +142,21 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
 
     MovimientoMaterial movimiento = new MovimientoMaterial();
     movimiento.setMaterial(material);
-    movimiento.setTipo(dto.getTipo());
+    movimiento.setTipo(dto.getTipo()); // ✅ ENUM
     movimiento.setCantidad(dto.getCantidad());
 
     MovimientoMaterial guardado = movimientoService.registrar(movimiento);
 
     MovimientoMaterialDTO response = new MovimientoMaterialDTO();
     response.setId(guardado.getId());
-    response.setTipo(guardado.getTipo());
+    response.setTipo(guardado.getTipo()); // ✅ ENUM
     response.setCantidad(guardado.getCantidad());
     response.setFecha(guardado.getFecha());
     response.setMaterialId(material.getId());
 
     return ResponseEntity.ok(response);
 }
+
    
     @GetMapping("/resumen-todo")
     public ResponseEntity<List<MaterialResumenDTO>> listarResumen() {
@@ -201,6 +212,34 @@ public ResponseEntity<Map<String, Object>> obtenerPaginas(
         "currentPage", archivosPage.getNumber() + 1
     );
     return ResponseEntity.ok(response);
+}
+
+@PostMapping("/salida-casa")
+public ResponseEntity<?> registrarSalidaCasa(
+        @RequestBody SalidaCasaDTO dto
+) {
+    try {
+
+        materialCasaService.registrarSalida(
+            dto.getCasaId(),
+            dto.getMaterialId(),
+            dto.getCantidad()
+        );
+
+        return ResponseEntity.ok(
+            Map.of(
+                "mensaje", "Salida registrada correctamente",
+                "casaId", dto.getCasaId(),
+                "materialId", dto.getMaterialId(),
+                "cantidad", dto.getCantidad()
+            )
+        );
+
+    } catch (RuntimeException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", e.getMessage()));
+    }
 }
 
     

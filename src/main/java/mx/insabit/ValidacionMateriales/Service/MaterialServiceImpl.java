@@ -166,6 +166,10 @@ Integer stock = entradas - salidas;
             movimientoRepository.delete(ultimo);
         }
 
+        @Override
+        public int obtenerStock(Long materialId) {
+       return movimientoRepository.obtenerStock(materialId);
+        }
 
 
 
