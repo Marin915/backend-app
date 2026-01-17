@@ -2,6 +2,8 @@ package mx.insabit.ValidacionMateriales.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
@@ -78,31 +80,41 @@ public class CasaService {
         );
     }
     
-   public AsignacionMaterialDTO asignarMaterial(Long casaId, Long materialId, int requerido) {
+ public AsignacionMaterialDTO asignarMaterial(Long casaId, Long materialId, int requerido) {
     Casa casa = casaRepository.findById(casaId)
-        .orElseThrow(() -> new RuntimeException("Casa no encontrada"));
+        .orElseThrow(() -> new NoSuchElementException("Casa no encontrada con id: " + casaId));
 
     Material material = materialRepository.findById(materialId)
-        .orElseThrow(() -> new RuntimeException("Material no encontrado"));
+        .orElseThrow(() -> new NoSuchElementException("Material no encontrado con id: " + materialId));
 
-    MaterialCasa mc = new MaterialCasa();
-    mc.setCasa(casa);
-    mc.setMaterial(material);
-    mc.setCantidadPresupuestada(requerido);
-    mc.setSalidas(0);
+    Optional<MaterialCasa> optionalMc = materialCasaRepository.findByCasaIdAndMaterialId(casaId, materialId);
 
-    materialCasaRepository.save(mc);
+    MaterialCasa mc;
+
+    if (optionalMc.isPresent()) {
+        mc = optionalMc.get();
+        mc.setCantidadPresupuestada(mc.getCantidadPresupuestada() + requerido); // Sumar la cantidad
+    } else {
+        mc = new MaterialCasa();
+        mc.setCasa(casa);
+        mc.setMaterial(material);
+        mc.setCantidadPresupuestada(requerido);
+        mc.setSalidas(0);
+    }
+
+    MaterialCasa saved = materialCasaRepository.save(mc);
 
     AsignacionMaterialDTO dto = new AsignacionMaterialDTO();
     dto.setCasaId(casa.getId());
     dto.setCasaNombre(casa.getNombre());
     dto.setMaterialId(material.getId());
     dto.setMaterialClave(material.getClave());
-    dto.setRequerido(requerido);
+    dto.setRequerido(saved.getCantidadPresupuestada());
     dto.setFechaAsignacion(LocalDateTime.now());
 
     return dto;
 }
+
 
   
       public CasaDTO toCasaDTO(Casa casa) {

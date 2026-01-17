@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialRequest;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
@@ -308,17 +309,12 @@ private CasaDTO toCasaDTO(Casa casa) {
     return dto;
 }
     
-    @PostMapping("/asignar-material")
-    public ResponseEntity<AsignacionMaterialDTO> asignarMaterial(@RequestBody Map<String, Object> body) {
-
-    Long casaId = ((Number) body.get("casaId")).longValue();
-    Long materialId = ((Number) body.get("materialId")).longValue();
-    int requerido = ((Number) body.get("requerido")).intValue();
-
-    AsignacionMaterialDTO dto = casaService.asignarMaterial(casaId, materialId, requerido);
-
+@PostMapping("/asignar-material")
+public ResponseEntity<AsignacionMaterialDTO> asignarMaterial(@RequestBody @Valid AsignacionMaterialRequest request) {
+    AsignacionMaterialDTO dto = casaService.asignarMaterial(request.getCasaId(), request.getMaterialId(), request.getRequerido());
     return ResponseEntity.ok(dto);
 }
+
  
   /*  // Paginacion 
     @GetMapping("/paginados")
