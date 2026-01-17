@@ -1,7 +1,9 @@
 package mx.insabit.ValidacionMateriales.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
@@ -76,25 +78,32 @@ public class CasaService {
         );
     }
     
-      public MaterialCasa asignarMaterial(
-        Long casaId,
-        Long materialId,
-        int requerido
-    ) {
-        Casa casa = casaRepository.findById(casaId)
-            .orElseThrow(() -> new RuntimeException("Casa no encontrada"));
+   public AsignacionMaterialDTO asignarMaterial(Long casaId, Long materialId, int requerido) {
+    Casa casa = casaRepository.findById(casaId)
+        .orElseThrow(() -> new RuntimeException("Casa no encontrada"));
 
-        Material material = materialRepository.findById(materialId)
-            .orElseThrow(() -> new RuntimeException("Material no encontrado"));
+    Material material = materialRepository.findById(materialId)
+        .orElseThrow(() -> new RuntimeException("Material no encontrado"));
 
-        MaterialCasa mc = new MaterialCasa();
-        mc.setCasa(casa);
-        mc.setMaterial(material);
-        mc.setCantidadPresupuestada(requerido);
-        mc.setSalidas(0);
+    MaterialCasa mc = new MaterialCasa();
+    mc.setCasa(casa);
+    mc.setMaterial(material);
+    mc.setCantidadPresupuestada(requerido);
+    mc.setSalidas(0);
 
-        return materialCasaRepository.save(mc);
-    }
+    materialCasaRepository.save(mc);
+
+    AsignacionMaterialDTO dto = new AsignacionMaterialDTO();
+    dto.setCasaId(casa.getId());
+    dto.setCasaNombre(casa.getNombre());
+    dto.setMaterialId(material.getId());
+    dto.setMaterialClave(material.getClave());
+    dto.setRequerido(requerido);
+    dto.setFechaAsignacion(LocalDateTime.now());
+
+    return dto;
+}
+
   
       public CasaDTO toCasaDTO(Casa casa) {
     CasaDTO dto = new CasaDTO();
@@ -112,7 +121,7 @@ public class CasaService {
 
     return dto;
 }
+ 
 
       
 }
-
