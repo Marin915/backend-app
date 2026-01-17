@@ -43,10 +43,10 @@ public class CasaService {
                 .orElseThrow(() -> new RuntimeException("Casa no encontrada"));
 
      ModeloCasa modelo = casa.getModelo();
-
-String nombreModelo = (modelo != null)
-    ? modelo.getNombre()
-    : "Sin modelo";
+     
+        String nombreModelo = (modelo != null)
+        ? modelo.getNombre()
+            : "Sin modelo";
 
 
 
