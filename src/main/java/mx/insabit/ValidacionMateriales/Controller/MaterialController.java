@@ -258,17 +258,22 @@ public ResponseEntity<?> registrarSalidaCasa(
 }
 
     @PostMapping("/crear-casa")
-    public ResponseEntity<Casa> crear(@RequestBody Casa casa) {
+public ResponseEntity<Casa> crear(@RequestBody Casa casa) {
 
-        ModeloCasa modelo = modeloCasaRepository.findById(
-            casa.getModelo().getId()
-        ).orElseThrow(() -> new RuntimeException("Modelo no encontrado"));
-
-        casa.setModelo(modelo);
-        casa.setProgreso(0);
-
-        return ResponseEntity.ok(casaRepository.save(casa));
+    if (casa.getModelo() == null || casa.getModelo().getId() == null) {
+        throw new RuntimeException("El modelo es obligatorio");
     }
+
+    ModeloCasa modelo = modeloCasaRepository
+            .findById(casa.getModelo().getId())
+            .orElseThrow(() -> new RuntimeException("Modelo no encontrado"));
+
+    casa.setModelo(modelo);
+    casa.setProgreso(0);
+
+    return ResponseEntity.ok(casaRepository.save(casa));
+}
+
     
     @PostMapping("/asignar-material")
     public ResponseEntity<?> asignarMaterial(@RequestBody Map<String, Object> body) {
