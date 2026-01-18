@@ -9,6 +9,7 @@ import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
+import mx.insabit.ValidacionMateriales.DTO.MaterialEntregaDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
@@ -18,6 +19,7 @@ import mx.insabit.ValidacionMateriales.Repository.CasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialCasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.ModeloCasaRepository;
+import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,20 +30,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class CasaService {
    
-    private final CasaRepository casaRepository;
+  private final CasaRepository casaRepository;
     private final ModeloCasaRepository modeloCasaRepository;
     private final MaterialRepository materialRepository;
     private final MaterialCasaRepository materialCasaRepository;
+    private final MovimientoMaterialRepository movimientoMaterialRepository;
 
-    public CasaService(CasaRepository casaRepository,
-                       ModeloCasaRepository modeloCasaRepository,
-                       MaterialRepository materialRepository,
-                       MaterialCasaRepository materialCasaRepository) {
+    public CasaService(
+            CasaRepository casaRepository,
+            ModeloCasaRepository modeloCasaRepository,
+            MaterialRepository materialRepository,
+            MaterialCasaRepository materialCasaRepository,
+            MovimientoMaterialRepository movimientoMaterialRepository
+    ) {
         this.casaRepository = casaRepository;
         this.modeloCasaRepository = modeloCasaRepository;
         this.materialRepository = materialRepository;
         this.materialCasaRepository = materialCasaRepository;
+        this.movimientoMaterialRepository = movimientoMaterialRepository;
     }
+
 
     public CasaDetalleDTO obtenerDetalleCasa(Long casaId) {
 
@@ -160,5 +168,47 @@ private MaterialCasaDTO toDTO(MaterialCasa materialCasa) {
 
     return dto;
 }
+
+
+ public List<MaterialEntregaDTO> obtenerEntregas() {
+
+        List<Material> materiales = materialRepository.findAll();
+
+        return materiales.stream()
+            .map(material -> {
+                Integer entregado = movimientoMaterialRepository.totalEntregado(
+                    material.getId()
+                );
+                return map(material, entregado);
+            })
+            .toList();
+    }
+
+    // TU MAP EXACTO
+    private MaterialEntregaDTO map(Material material, Integer entregado) {
+
+        MaterialEntregaDTO dto = new MaterialEntregaDTO();
+
+        dto.setId(material.getId());
+        dto.setClave(material.getClave());
+        dto.setDescripcion(material.getDescripcion());
+        dto.setUnidad(material.getUnidadMedida());
+
+        Integer presupuestada = 0;
+        Integer entregada = entregado != null ? entregado : 0;
+
+        dto.setCantidadPresupuestada(presupuestada);
+        dto.setCantidadEntregada(entregada);
+        dto.setSalidasPorEntregar(presupuestada - entregada);
+
+        dto.setFechaEntrega(
+            material.getFechaCreacion() != null
+                ? material.getFechaCreacion().toLocalDate()
+                : null
+        );
+
+        return dto;
+    }
+
 
 }

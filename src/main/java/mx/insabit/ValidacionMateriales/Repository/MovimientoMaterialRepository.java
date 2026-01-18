@@ -55,4 +55,13 @@ Integer obtenerSalidas(@Param("materialId") Long materialId);
     findTopByMaterialIdOrderByFechaDesc(Long materialId);
 
     
+    
+    @Query("""
+    SELECT COALESCE(SUM(m.cantidad), 0)
+    FROM MovimientoMaterial m
+    WHERE m.material.id = :materialId
+""")
+Integer totalEntregado(@Param("materialId") Long materialId);
+
+    
 }

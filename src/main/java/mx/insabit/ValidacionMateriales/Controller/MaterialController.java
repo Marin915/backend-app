@@ -14,6 +14,7 @@ import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.MaterialEntregaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
@@ -329,6 +330,14 @@ public ResponseEntity<List<MaterialCasaDTO>> obtenerMaterialesPorCasa(@PathVaria
     return ResponseEntity.ok(materiales);
 }
  
+ @GetMapping("/materiales/entregas")
+    public ResponseEntity<List<MaterialEntregaDTO>> obtenerEntregas() {
+        return ResponseEntity.ok(
+            casaService.obtenerEntregas()
+        );
+    }
+
+
   /*  // Paginacion 
     @GetMapping("/paginados")
     public ResponseEntity<Map<String, Object>> obtenerPaginas(
