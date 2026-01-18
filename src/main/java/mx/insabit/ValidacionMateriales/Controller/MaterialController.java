@@ -264,7 +264,7 @@ public ResponseEntity<?> registrarSalidaCasa(
     
 }
 
-   @PostMapping("/crear-casa")
+  @PostMapping("/crear-casa")
 public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
 
     if (casa.getModelo() == null || casa.getModelo().getId() == null) {
@@ -273,12 +273,14 @@ public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
             "El modelo es obligatorio"
         );
     }
+
     ModeloCasa modelo = modeloCasaRepository
         .findById(casa.getModelo().getId())
         .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.BAD_REQUEST,
             "Modelo no encontrado"
         ));
+
     casa.setModelo(modelo);
     casa.setProgreso(0);
 
@@ -289,10 +291,9 @@ public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
     );
     modeloCasaRepository.save(modelo);
 
-    CasaDTO dto = toCasaDTO(guardada);
-
-    return ResponseEntity.ok(dto);
+    return ResponseEntity.ok(toCasaDTO(guardada));
 }
+
 
 private CasaDTO toCasaDTO(Casa casa) {
     CasaDTO dto = new CasaDTO();

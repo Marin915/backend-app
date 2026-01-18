@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "casa")
 public class Casa {
-   
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +25,7 @@ public class Casa {
     @Column(length = 150)
     private String ubicacion;
 
-    private Integer progreso;
+    private Integer progreso = 0; // 👈 evita null
 
     @ManyToOne
     @JoinColumn(name = "modelo_id", nullable = false)
@@ -34,62 +34,66 @@ public class Casa {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
-    public Casa() {
-    }
+         public Casa(Long id, String nombre, String ubicacion, ModeloCasa modelo) {
+             this.id = id;
+             this.nombre = nombre;
+             this.ubicacion = ubicacion;
+             this.modelo = modelo;
+         }
 
-    public Casa(Long id, String nombre, String ubicacion, Integer progreso, ModeloCasa modelo) {
-        this.id = id;
-        this.nombre = nombre;
-        this.ubicacion = ubicacion;
-        this.progreso = progreso;
-        this.modelo = modelo;
-    }
+         public Casa() {
+         }
 
-    public Long getId() {
-        return id;
-    }
+         public Long getId() {
+             return id;
+         }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+         public void setId(Long id) {
+             this.id = id;
+         }
 
-    public String getNombre() {
-        return nombre;
-    }
+         public String getNombre() {
+             return nombre;
+         }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+         public void setNombre(String nombre) {
+             this.nombre = nombre;
+         }
 
-    public String getUbicacion() {
-        return ubicacion;
-    }
+         public String getUbicacion() {
+             return ubicacion;
+         }
 
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
-    }
+         public void setUbicacion(String ubicacion) {
+             this.ubicacion = ubicacion;
+         }
 
-    public Integer getProgreso() {
-        return progreso;
-    }
+         public Integer getProgreso() {
+             return progreso;
+         }
 
-    public void setProgreso(Integer progreso) {
-        this.progreso = progreso;
-    }
+         public void setProgreso(Integer progreso) {
+             this.progreso = progreso;
+         }
 
-    public ModeloCasa getModelo() {
-        return modelo;
-    }
+         public ModeloCasa getModelo() {
+             return modelo;
+         }
 
-    public void setModelo(ModeloCasa modelo) {
-        this.modelo = modelo;
-    }
+         public void setModelo(ModeloCasa modelo) {
+             this.modelo = modelo;
+         }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
+         public LocalDateTime getFechaCreacion() {
+             return fechaCreacion;
+         }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }    
+         public void setFechaCreacion(LocalDateTime fechaCreacion) {
+             this.fechaCreacion = fechaCreacion;
+         }
+
+    
 }
+    
+    
+
