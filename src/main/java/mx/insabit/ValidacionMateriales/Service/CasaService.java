@@ -10,6 +10,7 @@ import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialEntregaDTO;
+import mx.insabit.ValidacionMateriales.DTO.ModeloCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
@@ -213,5 +214,17 @@ private MaterialCasaDTO toDTO(MaterialCasa materialCasa) {
         return dto;
     }
 
+      public List<ModeloCasaDTO> obtenerModelos() {
+        List<ModeloCasa> modelos = modeloCasaRepository.findAll();
+
+        // Convertir entidad a DTO
+        return modelos.stream()
+                .map(m -> new ModeloCasaDTO(
+                    m.getId().intValue(),     // si tu DTO usa Integer y entidad Long
+                    m.getNombre(),
+                    m.getDescripcion()
+                ))
+                .collect(Collectors.toList());
+    }
 
 }
