@@ -8,22 +8,43 @@ package mx.insabit.ValidacionMateriales.DTO;
 
 public class MaterialCasaDTO {
     
-    private Long id;
+      private Long id;
     private Long materialId;  // 👈 ID real del material
+    private String clave;     // 👈 clave del material
     private String nombre;
     private String unidad;
     private Integer requerido;
     private Integer usado;
+    private String fechaEntrega;  
 
-    public MaterialCasaDTO(Long id, Long materialId, String nombre, String unidad, Integer requerido, Integer usado) {
+    public MaterialCasaDTO(Long id, Long materialId, String clave, String nombre, String unidad, Integer requerido, Integer usado, String fechaEntrega) {
         this.id = id;
         this.materialId = materialId;
+        this.clave = clave;
         this.nombre = nombre;
         this.unidad = unidad;
         this.requerido = requerido;
         this.usado = usado;
+        this.fechaEntrega = fechaEntrega;
     }
 
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public String getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(String fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
+   
     public Long getMaterialId() {
         return materialId;
     }

@@ -31,7 +31,7 @@ public class MaterialCasaService {
     }
 
   @Transactional
-public void registrarSalida(
+  public void registrarSalida(
     Long casaId,
     Long materialId,
     int cantidad

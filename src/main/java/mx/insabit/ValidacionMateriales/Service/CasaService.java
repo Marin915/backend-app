@@ -68,15 +68,20 @@ public class CasaService {
 List<MaterialCasaDTO> materiales =
     casaRepository.obtenerMaterialesPorCasa(casaId)
         .stream()
-        .map(row -> new MaterialCasaDTO(
-            ((Number) row[0]).longValue(),   // id (relación casa_material)
-            ((Number) row[1]).longValue(),   // materialId
-            (String) row[2],                 // nombre
-            (String) row[3],                 // unidad
-            ((Number) row[4]).intValue(),    // requerido
-            ((Number) row[5]).intValue()     // usado
-        ))
+        .map(row -> {
+            MaterialCasaDTO dto = new MaterialCasaDTO();
+            dto.setId(((Number) row[0]).longValue());            // id
+            dto.setMaterialId(((Number) row[1]).longValue());    // materialId
+            dto.setClave((String) row[2]);                        // clave
+            dto.setNombre((String) row[3]);                       // nombre
+            dto.setUnidad((String) row[4]);                       // unidad
+            dto.setRequerido(((Number) row[5]).intValue());      // requerido
+            dto.setUsado(((Number) row[6]).intValue());          // usado
+            dto.setFechaEntrega((String) row[7]);                 // fechaEntrega
+            return dto;
+        })
         .collect(Collectors.toList());
+
 
 
         Integer progreso = casaRepository.calcularProgreso(casaId);
