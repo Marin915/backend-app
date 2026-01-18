@@ -64,21 +64,24 @@ public class CasaService {
 
 
 
-        List<MaterialCasaDTO> materiales =
-                casaRepository.obtenerMaterialesPorCasa(casaId)
-                        .stream()
-                        .map(row -> new MaterialCasaDTO(
-                                ((Number) row[0]).longValue(),
-                                (String) row[1],
-                                (String) row[2],
-                                ((Number) row[3]).intValue(),
-                                ((Number) row[4]).intValue()
-                        ))
-                        .collect(Collectors.toList());
+List<MaterialCasaDTO> materiales =
+    casaRepository.obtenerMaterialesPorCasa(casaId)
+        .stream()
+        .map(row -> new MaterialCasaDTO(
+            ((Number) row[0]).longValue(),   // id (relación casa_material)
+            ((Number) row[1]).longValue(),   // materialId
+            (String) row[2],                 // nombre
+            (String) row[3],                 // unidad
+            ((Number) row[4]).intValue(),    // requerido
+            ((Number) row[5]).intValue()     // usado
+        ))
+        .collect(Collectors.toList());
+
 
         Integer progreso = casaRepository.calcularProgreso(casaId);
         if (progreso == null) progreso = 0;
 
+    
         return new CasaDetalleDTO(
                 casa.getId(),
                 casa.getNombre(),
@@ -86,8 +89,8 @@ public class CasaService {
                 progreso,
                 materiales
         );
-    }
     
+    }
  public AsignacionMaterialDTO asignarMaterial(Long casaId, Long materialId, int requerido) {
     Casa casa = casaRepository.findById(casaId)
         .orElseThrow(() -> new NoSuchElementException("Casa no encontrada con id: " + casaId));

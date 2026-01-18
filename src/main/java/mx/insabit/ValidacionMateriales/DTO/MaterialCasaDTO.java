@@ -9,18 +9,30 @@ package mx.insabit.ValidacionMateriales.DTO;
 public class MaterialCasaDTO {
     
     private Long id;
+    private Long materialId;  // 👈 ID real del material
     private String nombre;
     private String unidad;
     private Integer requerido;
     private Integer usado;
 
-    public MaterialCasaDTO(Long id, String nombre, String unidad, Integer requerido, Integer usado) {
+    public MaterialCasaDTO(Long id, Long materialId, String nombre, String unidad, Integer requerido, Integer usado) {
         this.id = id;
+        this.materialId = materialId;
         this.nombre = nombre;
         this.unidad = unidad;
         this.requerido = requerido;
         this.usado = usado;
     }
+
+    public Long getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(Long materialId) {
+        this.materialId = materialId;
+    }
+
+
 
     public MaterialCasaDTO() {
     }
