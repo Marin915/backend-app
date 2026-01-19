@@ -261,12 +261,10 @@ public ResponseEntity<?> registrarSalidaCasa(
                 .body(Map.of("error", e.getMessage()));
     }
     
-    
-    
 }
 
   @PostMapping("/crear-casa")
-public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
+    public ResponseEntity<CasaDTO> crear(@RequestBody Casa casa) {
 
     if (casa.getModelo() == null || casa.getModelo().getId() == null) {
         throw new ResponseStatusException(

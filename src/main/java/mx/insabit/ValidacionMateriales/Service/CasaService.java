@@ -163,21 +163,29 @@ List<MaterialCasaDTO> materiales =
     return materiales.stream().map(this::toDTO).collect(Collectors.toList());
 }
 
-private MaterialCasaDTO toDTO(MaterialCasa materialCasa) {
-    MaterialCasaDTO dto = new MaterialCasaDTO();
-    dto.setId(materialCasa.getId());
+private MaterialCasaDTO toDTO(MaterialCasa mc) {
+        MaterialCasaDTO dto = new MaterialCasaDTO();
 
-    // Aquí accedes a la entidad material relacionada para obtener el nombre
-    dto.setNombre(materialCasa.getMaterial().getDescripcion()); // o getClave()
+  
+    dto.setId(mc.getId());
+    dto.setRequerido(mc.getCantidadPresupuestada());
+    dto.setUsado(mc.getSalidas());
 
-    dto.setUnidad(materialCasa.getMaterial().getUnidadMedida()); // o el getter correcto de unidad
+    if (mc.getFechaEntrega() != null) {
+        dto.setFechaEntrega(mc.getFechaEntrega().toString());
+    }
 
-    dto.setRequerido(materialCasa.getCantidadPresupuestada());
-    dto.setUsado(materialCasa.getSalidas());
+    if (mc.getMaterial() != null) {
+        dto.setMaterialId(mc.getMaterial().getId());
+        dto.setClave(mc.getMaterial().getClave());
+
+        // 🔥 AQUÍ ESTABA EL ERROR
+        dto.setNombre(mc.getMaterial().getDescripcion());
+        dto.setUnidad(mc.getMaterial().getUnidadMedida());
+    }
 
     return dto;
 }
-
 
  public List<MaterialEntregaDTO> obtenerEntregas() {
 

@@ -8,43 +8,27 @@ package mx.insabit.ValidacionMateriales.DTO;
 
 public class MaterialCasaDTO {
     
-      private Long id;
-    private Long materialId;  // 👈 ID real del material
-    private String clave;     // 👈 clave del material
+   private Long id;
+
+    private Long materialId;
+    private String clave;
     private String nombre;
     private String unidad;
-    private Integer requerido;
-    private Integer usado;
-    private String fechaEntrega;  
 
-    public MaterialCasaDTO(Long id, Long materialId, String clave, String nombre, String unidad, Integer requerido, Integer usado, String fechaEntrega) {
-        this.id = id;
-        this.materialId = materialId;
-        this.clave = clave;
-        this.nombre = nombre;
-        this.unidad = unidad;
-        this.requerido = requerido;
-        this.usado = usado;
-        this.fechaEntrega = fechaEntrega;
-    }
+    private Integer requerido;   // cantidadPresupuestada
+    private Integer usado;       // salidas
 
-    public String getClave() {
-        return clave;
-    }
-
-    public void setClave(String clave) {
-        this.clave = clave;
-    }
-
-    public String getFechaEntrega() {
-        return fechaEntrega;
-    }
-
-    public void setFechaEntrega(String fechaEntrega) {
-        this.fechaEntrega = fechaEntrega;
-    }
+    private String fechaEntrega;
 
    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getMaterialId() {
         return materialId;
     }
@@ -53,19 +37,12 @@ public class MaterialCasaDTO {
         this.materialId = materialId;
     }
 
-
-
-    public MaterialCasaDTO() {
+    public String getClave() {
+        return clave;
     }
 
-  
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
     public String getNombre() {
@@ -98,6 +75,14 @@ public class MaterialCasaDTO {
 
     public void setUsado(Integer usado) {
         this.usado = usado;
+    }
+
+    public String getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(String fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
     }
     
     
