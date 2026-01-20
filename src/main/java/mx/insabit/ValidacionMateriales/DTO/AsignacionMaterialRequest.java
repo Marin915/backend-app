@@ -1,6 +1,8 @@
 
 package mx.insabit.ValidacionMateriales.DTO;
 
+import java.time.LocalDate;
+
 /**
  *
  * @author Marin
@@ -10,6 +12,7 @@ public class AsignacionMaterialRequest {
     private Long casaId;
     private Long materialId;
     private int requerido;
+        private LocalDate fechaEntrega;
 
     public Long getCasaId() {
         return casaId;
@@ -33,6 +36,14 @@ public class AsignacionMaterialRequest {
 
     public void setRequerido(int requerido) {
         this.requerido = requerido;
+    }
+
+    public LocalDate getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(LocalDate fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
     }
     
     

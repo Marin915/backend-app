@@ -1,19 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package mx.insabit.ValidacionMateriales.DTO;
 
-/**
- *
- * @author Marin
- */
+
 public class ModeloCasaDTO {
     
      private Integer id;
     private String nombre;
     private String descripcion;
 
+    
+    
     public ModeloCasaDTO(Integer id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;

@@ -1,0 +1,12 @@
+
+# Usamos una imagen base de Java con JDK 17 (ajusta según tu versión)
+FROM eclipse-temurin:17-jdk-jammy
+
+# Copiamos el jar generado en el build
+Materiales-0.0.1-SNAPSHOT
+
+# Puerto en el que corre tu app
+EXPOSE 8081
+
+# Comando para arrancar la app
+ENTRYPOINT ["java","-jar","/app.jar"]

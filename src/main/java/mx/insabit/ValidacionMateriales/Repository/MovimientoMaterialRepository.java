@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 public interface MovimientoMaterialRepository extends JpaRepository<MovimientoMaterial, Long> {
     
     
-@Query("""
+/*@Query("""
     SELECT COALESCE(SUM(
         CASE 
             WHEN m.tipo = 'ENTRADA' THEN m.cantidad
@@ -31,7 +31,22 @@ public interface MovimientoMaterialRepository extends JpaRepository<MovimientoMa
     FROM MovimientoMaterial m
     WHERE m.material.id = :materialId
 """)
+Integer obtenerStock(@Param("materialId") Long materialId);*/
+    
+    @Query("""
+    SELECT COALESCE(SUM(
+        CASE 
+            WHEN m.tipo = 'ENTRADA' THEN m.cantidad
+            WHEN m.tipo = 'DEVOLUCION' THEN m.cantidad
+            WHEN m.tipo = 'SALIDA' THEN -m.cantidad
+            ELSE 0
+        END
+    ), 0)
+    FROM MovimientoMaterial m
+    WHERE m.material.id = :materialId
+""")
 Integer obtenerStock(@Param("materialId") Long materialId);
+
 
     @Query("""
     SELECT COALESCE(SUM(m.cantidad), 0)

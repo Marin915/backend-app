@@ -62,4 +62,7 @@ public interface CasaRepository extends JpaRepository<Casa, Long> {
         ) t
         """, nativeQuery = true)
     Integer calcularProgreso(@Param("casaId") Long casaId);
+    
+        List<Casa> findByModeloId(Long modeloId);
+
 }

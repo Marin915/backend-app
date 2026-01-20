@@ -43,6 +43,8 @@ public class Material {
 
     @Column(nullable = false)
     private boolean activo = true;
+    
+    
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion = LocalDateTime.now();

@@ -12,6 +12,7 @@ import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialRequest;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
+import mx.insabit.ValidacionMateriales.DTO.DevolucionCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialEntregaDTO;
@@ -24,6 +25,7 @@ import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.MapStruc.MaterialMapper;
 import mx.insabit.ValidacionMateriales.Repository.CasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.ModeloCasaRepository;
 import mx.insabit.ValidacionMateriales.Service.CasaService;
@@ -34,10 +36,7 @@ import mx.insabit.ValidacionMateriales.Service.MaterialServiceImpl;
 import mx.insabit.ValidacionMateriales.Service.MovimientoMaterialService;
 import mx.insabit.ValidacionMateriales.Service.ReporteService;
 import org.springframework.http.ResponseEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ContentDisposition;
@@ -47,14 +46,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.server.ResponseStatusException;
 
 
-
+//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/materiales")
 @CrossOrigin(origins = "*")
 public class MaterialController {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(MaterialController.class);
 
    private final ReporteService reporteService;
    private final CasaService casaService;
@@ -62,7 +58,8 @@ public class MaterialController {
     private final MovimientoMaterialService movimientoService;
     private final MaterialCasaService materialCasaService;
   
-    
+    @Autowired
+    private MaterialMapper casaMapper; // 👈 AQUÍ VA
     private final CasaRepository casaRepository;
     private final ModeloCasaRepository modeloCasaRepository;
 
@@ -114,7 +111,6 @@ public MaterialController(
             @PathVariable Long id,
             @Valid @RequestBody MaterialDTO dto) {
 
-        logger.info("Actualizando material id {}", id);
 
         Material material = materialService.obtenerPorId(id);
 
@@ -180,10 +176,8 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
    
     @GetMapping("/resumen-todo")
     public ResponseEntity<List<MaterialResumenDTO>> listarResumen() {
-        logger.info("Entrando a listarResumen()");
         List<MaterialResumenDTO> resumen =
                 materialService.listarResumen();
-        logger.info("Resumen obtenido: {}", resumen.size());
         return ResponseEntity.ok(resumen);
     }
     
@@ -207,7 +201,6 @@ public ResponseEntity<MovimientoMaterialDTO> registrarMovimiento(
     
     @GetMapping("/{id}/detalle")
     public ResponseEntity<CasaDetalleDTO> obtenerDetalle(@PathVariable Long id) {
-        logger.info("Consultando detalle de casa id {}", id);
         CasaDetalleDTO detalle = casaService.obtenerDetalleCasa(id);
         return ResponseEntity.ok(detalle);
     }
@@ -310,19 +303,29 @@ private CasaDTO toCasaDTO(Casa casa) {
 
     return dto;
 }
-    
-@PostMapping("/asignar-material")
-public ResponseEntity<AsignacionMaterialDTO> asignarMaterial(@RequestBody @Valid AsignacionMaterialRequest request) {
-    AsignacionMaterialDTO dto = casaService.asignarMaterial(request.getCasaId(), request.getMaterialId(), request.getRequerido());
+ @PostMapping("/asignar-material")
+public ResponseEntity<AsignacionMaterialDTO> asignarMaterial(
+        @RequestBody @Valid AsignacionMaterialRequest request
+) {
+    AsignacionMaterialDTO dto = casaService.asignarMaterial(
+        request.getCasaId(),
+        request.getMaterialId(),
+        request.getRequerido(),
+        request.getFechaEntrega()   // 👈 SE AGREGA
+    );
+
     return ResponseEntity.ok(dto);
 }
 
 
+
+/*
 @GetMapping("/casas")
 public ResponseEntity<List<CasaDTO>> listarCasas() {
     List<CasaDTO> casas = casaService.listarTodasCasas();
     return ResponseEntity.ok(casas);
 }
+*/
 
 @GetMapping("/casas/{id}/materiales")
 public ResponseEntity<List<MaterialCasaDTO>> obtenerMaterialesPorCasa(@PathVariable Long id) {
@@ -372,6 +375,36 @@ public ResponseEntity<List<MaterialCasaDTO>> obtenerMaterialesPorCasa(@PathVaria
 
 
            }
+           
+  @GetMapping("/casas")
+public ResponseEntity<List<CasaDTO>> listarCasas(
+        @RequestParam(required = false) Long modeloId) {
+
+    List<CasaDTO> casas;
+
+    if (modeloId != null) {
+        casas = casaService.obtenerPorModelo(modeloId)
+                .stream()
+                .map(casaMapper::toDTO)
+                .toList();
+    } else {
+        casas = casaService.obtenerTodas()
+                .stream()
+                .map(casaMapper::toDTO)
+                .toList();
+    }
+
+    return ResponseEntity.ok(casas);
+}
+    @PostMapping("/devolucion-casa")
+public ResponseEntity<?> devolverMaterialCasa(
+        @RequestBody DevolucionCasaDTO dto) {
+
+    casaService.devolverMaterialCasa(dto);
+    return ResponseEntity.ok().build();
+}
+
+
 }
 /*
    private final MaterialService servicio;

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package mx.insabit.ValidacionMateriales.MapStruc;
 
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
@@ -9,11 +6,13 @@ import mx.insabit.ValidacionMateriales.DTO.MaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Marin
  */
+@Component
 public class MaterialMappers {
     
     public static MaterialDTO toDTO(Material material) {
@@ -39,7 +38,8 @@ public class MaterialMappers {
         return material;
     }
     
-      public CasaDTO toDTO(Casa casa) {
+     public CasaDTO toDTO(Casa casa) {
+
         CasaDTO dto = new CasaDTO();
         dto.setId(casa.getId());
         dto.setNombre(casa.getNombre());
@@ -47,6 +47,7 @@ public class MaterialMappers {
         dto.setProgreso(casa.getProgreso());
         dto.setFechaCreacion(casa.getFechaCreacion());
 
+        // 🔹 MODELO SIMPLE
         ModeloCasaSimpleDTO modeloDTO = new ModeloCasaSimpleDTO();
         modeloDTO.setId(casa.getModelo().getId());
         modeloDTO.setNombre(casa.getModelo().getNombre());
@@ -54,7 +55,6 @@ public class MaterialMappers {
         dto.setModelo(modeloDTO);
 
         return dto;
-    }
-      
+     }
       
 }

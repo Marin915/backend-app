@@ -1,5 +1,7 @@
 package mx.insabit.ValidacionMateriales.Service;
 
+import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 import mx.insabit.ValidacionMateriales.DTO.AsignacionMaterialDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.CasaDetalleDTO;
+import mx.insabit.ValidacionMateriales.DTO.DevolucionCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.MaterialEntregaDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaDTO;
@@ -16,6 +19,8 @@ import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.MaterialCasa;
 import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
+import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.Entity.TipoMovimiento;
 import mx.insabit.ValidacionMateriales.Repository.CasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialCasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
@@ -97,26 +102,46 @@ List<MaterialCasaDTO> materiales =
         );
     
     }
- public AsignacionMaterialDTO asignarMaterial(Long casaId, Long materialId, int requerido) {
+public AsignacionMaterialDTO asignarMaterial(
+        Long casaId,
+        Long materialId,
+        int requerido,
+        LocalDate fechaEntrega
+) {
+
     Casa casa = casaRepository.findById(casaId)
-        .orElseThrow(() -> new NoSuchElementException("Casa no encontrada con id: " + casaId));
+        .orElseThrow(() -> new NoSuchElementException(
+            "Casa no encontrada con id: " + casaId));
 
     Material material = materialRepository.findById(materialId)
-        .orElseThrow(() -> new NoSuchElementException("Material no encontrado con id: " + materialId));
+        .orElseThrow(() -> new NoSuchElementException(
+            "Material no encontrado con id: " + materialId));
 
-    Optional<MaterialCasa> optionalMc = materialCasaRepository.findByCasaIdAndMaterialId(casaId, materialId);
+    Optional<MaterialCasa> optionalMc =
+        materialCasaRepository.findByCasaIdAndMaterialId(casaId, materialId);
 
     MaterialCasa mc;
 
     if (optionalMc.isPresent()) {
         mc = optionalMc.get();
-        mc.setCantidadPresupuestada(mc.getCantidadPresupuestada() + requerido); // Sumar la cantidad
+
+        // ✅ SUMA
+        mc.setCantidadPresupuestada(
+            mc.getCantidadPresupuestada() + requerido
+        );
+
+        // 🔥 AQUÍ ESTABA EL DETALLE
+        if (mc.getFechaEntrega() == null && fechaEntrega != null) {
+            mc.setFechaEntrega(fechaEntrega);
+        }
+
     } else {
         mc = new MaterialCasa();
         mc.setCasa(casa);
         mc.setMaterial(material);
         mc.setCantidadPresupuestada(requerido);
         mc.setSalidas(0);
+        mc.setFechaEntrega(fechaEntrega);
     }
 
     MaterialCasa saved = materialCasaRepository.save(mc);
@@ -131,6 +156,7 @@ List<MaterialCasaDTO> materiales =
 
     return dto;
 }
+
 
 
   
@@ -239,5 +265,50 @@ private MaterialCasaDTO toDTO(MaterialCasa mc) {
                 ))
                 .collect(Collectors.toList());
     }
+
+       public List<Casa> obtenerTodas() {
+        return casaRepository.findAll();
+    }
+
+    public List<Casa> obtenerPorModelo(Long modeloId) {
+        return casaRepository.findByModeloId(modeloId);
+    }
+    
+@Transactional
+public void devolverMaterialCasa(DevolucionCasaDTO dto) {
+
+    MaterialCasa mc = materialCasaRepository
+        .findByCasaIdAndMaterialId(dto.getCasaId(), dto.getMaterialId())
+        .orElseThrow(() -> new RuntimeException("Material no asignado a la casa"));
+
+    int requerido = mc.getCantidadPresupuestada() == null ? 0 : mc.getCantidadPresupuestada();
+    int usado = mc.getSalidas() == null ? 0 : mc.getSalidas();
+
+    int sobrante = requerido - usado;
+
+    if (dto.getCantidad() <= 0) {
+        throw new RuntimeException("Cantidad inválida");
+    }
+
+    if (dto.getCantidad() > sobrante) {
+        throw new RuntimeException("La cantidad a devolver excede el sobrante");
+    }
+
+    mc.setSalidas(usado - dto.getCantidad());
+    materialCasaRepository.save(mc);
+
+    Material material = materialRepository.findById(dto.getMaterialId())
+        .orElseThrow(() -> new RuntimeException("Material no encontrado"));
+
+    MovimientoMaterial mov = new MovimientoMaterial();
+    mov.setMaterial(material);
+    mov.setTipo(TipoMovimiento.DEVOLUCION);
+    mov.setCantidad(dto.getCantidad());
+    mov.setFecha(LocalDateTime.now());
+
+    movimientoMaterialRepository.save(mov);
+}
+
+
 
 }
