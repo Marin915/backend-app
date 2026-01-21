@@ -404,6 +404,16 @@ public ResponseEntity<?> devolverMaterialCasa(
     return ResponseEntity.ok().build();
 }
 
+ @GetMapping("/public/hello")
+    public String publicHello() {
+        return "Hola desde endpoint público, sin autenticación";
+    }
+
+    // Endpoint privado (requiere autenticación)
+    @GetMapping("/private/hello")
+    public String privateHello() {
+        return "Hola desde endpoint privado, autenticación exitosa";
+    }
 
 }
 /*
