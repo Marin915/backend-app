@@ -36,8 +36,8 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     @Bean
     public UserDetailsService users() {
         UserDetails user = User.withDefaultPasswordEncoder()  // para ejemplo simple, no para producción
-            .username("admin")
-            .password("admin123")
+            .username("Conavi")
+            .password("Grupo586")
             .roles("USER")
             .build();
         return new InMemoryUserDetailsManager(user);
