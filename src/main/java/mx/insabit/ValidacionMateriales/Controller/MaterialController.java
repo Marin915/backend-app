@@ -46,7 +46,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.server.ResponseStatusException;
 
 
-@CrossOrigin(origins = "https://inventario-frontend.onrender.com")
+@CrossOrigin(origins = "https://inventario-frontend-pz47.onrender.com")
 @RestController
 @RequestMapping("/api/materiales")
 //@CrossOrigin(origins = "*")
