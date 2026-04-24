@@ -5,14 +5,24 @@ package mx.insabit.ValidacionMateriales.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
+import mx.insabit.ValidacionMateriales.Entity.EstadoHerramienta;
+import mx.insabit.ValidacionMateriales.Entity.Herramienta;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.Entity.Persona;
+import mx.insabit.ValidacionMateriales.Entity.RegistroHerramienta;
+import mx.insabit.ValidacionMateriales.Entity.TipoMovimiento;
+import mx.insabit.ValidacionMateriales.Repository.HerramientaRepository;
 import mx.insabit.ValidacionMateriales.Repository.MaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.MovimientoMaterialRepository;
 import mx.insabit.ValidacionMateriales.Repository.PaginacionRepository;
+import mx.insabit.ValidacionMateriales.Repository.PersonaRepository;
+import mx.insabit.ValidacionMateriales.Repository.RegistroHerramientaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,17 +34,24 @@ public class MaterialServiceImpl implements MaterialService {
 
     private final MaterialRepository materialRepository;
     private final MovimientoMaterialRepository movimientoRepository;
-    private final PaginacionRepository paginacionRepository; // ✅ FINAL
-
-    
+    private final PaginacionRepository paginacionRepository;
+    private final RegistroHerramientaRepository registroRepository;
+    private final PersonaRepository personaRepository;
+    private final HerramientaRepository herramientaRepository;
 
     public MaterialServiceImpl(MaterialRepository materialRepository,
                                MovimientoMaterialRepository movimientoRepository,
-                               PaginacionRepository paginacionRepository) {
+                               PaginacionRepository paginacionRepository,
+                               RegistroHerramientaRepository registroRepository,
+                               PersonaRepository personaRepository,
+                               HerramientaRepository herramientaRepository) {
+
         this.materialRepository = materialRepository;
         this.movimientoRepository = movimientoRepository;
         this.paginacionRepository = paginacionRepository;
-
+        this.registroRepository = registroRepository;
+        this.personaRepository = personaRepository;
+        this.herramientaRepository = herramientaRepository;
     }
 
     
@@ -171,8 +188,101 @@ Integer stock = entradas - salidas;
        return movimientoRepository.obtenerStock(materialId);
         }
 
+        /*
+         public RegistroHerramienta guardar(RegistroHerramienta r){
 
-        
+        r.setEstado("PRESTADA");
+        r.setFechaRegistro(LocalDateTime.now());
+        r.setFolio("H-" + System.currentTimeMillis());
+
+        return herramientaRepository.save(r);
+    }
+
+    @Override
+    public List<RegistroHerramienta> listarDevueltas() {
+        return herramientaRepository.findByEstado("DEVUELTA");
+    }
+
+    public RegistroHerramienta devolver(Long id) {
+
+        RegistroHerramienta r = herramientaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+
+        r.setEstado("DEVUELTA");
+        r.setFechaDevolucion(LocalDate.now());
+
+        return herramientaRepository.save(r);
+    }
+    */
+    /* public RegistroHerramienta guardar(Long personaId,
+                                        Long herramientaId,
+                                        Integer cantidad){
+
+        Persona persona = personaRepository.findById(personaId).orElseThrow();
+        Herramienta herramienta = herramientaRepository.findById(herramientaId).orElseThrow();
+
+        RegistroHerramienta r = new RegistroHerramienta();
+
+        r.setPersona(persona);
+        r.setHerramienta(herramienta);
+        r.setCantidad(cantidad);
+        r.setEstado("PRESTADA");
+        r.setFechaPrestamo(LocalDate.now());
+        r.setFechaRegistro(LocalDateTime.now());
+        r.setFolio("HR-" + System.currentTimeMillis());
+
+        return registroRepository.save(r);
+    }
+     */
+  public RegistroHerramienta prestar(Long personaId,
+                                       Long herramientaId,
+                                       Integer cantidad){
+
+        Persona persona = personaRepository.findById(personaId).orElseThrow();
+        Herramienta herramienta = herramientaRepository.findById(herramientaId).orElseThrow();
+
+        RegistroHerramienta r = new RegistroHerramienta();
+
+        r.setPersona(persona);
+        r.setHerramienta(herramienta);
+        r.setCantidad(cantidad);
+        r.setEstado(EstadoHerramienta.PRESTADA);
+        r.setTipoMovimiento(TipoMovimiento.ENTRADA);
+        r.setFechaPrestamo(LocalDate.now());
+        r.setFechaRegistro(LocalDateTime.now());
+        r.setFolio("HR-" + System.currentTimeMillis());
+
+        return registroRepository.save(r);
+    }
+
+    public RegistroHerramienta devolver(Long registroId){
+
+        RegistroHerramienta r = registroRepository.findById(registroId)
+                .orElseThrow();
+
+        r.setEstado(EstadoHerramienta.DEVUELTA);
+        r.setTipoMovimiento(TipoMovimiento.SALIDA);
+        r.setFechaDevolucion(LocalDate.now());
+
+        return registroRepository.save(r);
+    }
+
+    public List<RegistroHerramienta> listarHerramientas(){
+        return registroRepository.findAll();
+    }
+    
+    @Override
+    public RegistroHerramienta guardar(Long personaId,
+                                   Long herramientaId,
+                                   Integer cantidad) {
+      return prestar(personaId, herramientaId, cantidad);
+}
+
+}
+
+
+    
+    
   /*
     private final MaterialesRepository repo;
     private final MaterialMapper mapper;
@@ -225,4 +335,3 @@ Integer stock = entradas - salidas;
         repo.deleteById(id);
     }
     */
-}

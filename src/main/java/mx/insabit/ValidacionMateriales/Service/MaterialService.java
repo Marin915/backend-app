@@ -4,6 +4,7 @@ package mx.insabit.ValidacionMateriales.Service;
 import java.util.List;
 import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.Entity.Material;
+import mx.insabit.ValidacionMateriales.Entity.RegistroHerramienta;
 import org.springframework.data.domain.Page;
 
 
@@ -31,10 +32,17 @@ public interface MaterialService {
      
      // ✅ Paginación con RESUMEN (stock, entradas y salidas)
     Page<MaterialResumenDTO> obtenerPaginasResumen(int page, int size);
+    
+     // 👇 AGREGA ESTE MÉTODO
+    RegistroHerramienta guardar(Long personaId,
+                                Long herramientaId,
+                                Integer cantidad);
 
     // ✅ STOCK REAL
     int obtenerStock(Long materialId);
    /* MaterialesDTO crear(MaterialesDTO dto);
+    
+    
 
     MaterialesDTO obtener(Long id);
 
@@ -44,4 +52,13 @@ public interface MaterialService {
 
     void eliminar(Long id);
     */
+    
+    List<RegistroHerramienta> listarHerramientas();
+
+    
+     RegistroHerramienta prestar(Long personaId,
+                                Long herramientaId,
+                                Integer cantidad);
+
+    RegistroHerramienta devolver(Long registroId);
 }

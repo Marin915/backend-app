@@ -13,6 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("https://inventario-frontend-pz47.onrender.com")
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-            .allowedHeaders("*");
+            .allowedHeaders("*")
+                .allowCredentials(true)   // 🔥 IMPORTANTE
+            .maxAge(3600); ;
     }
 }

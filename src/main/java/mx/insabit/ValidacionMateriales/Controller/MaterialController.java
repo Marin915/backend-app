@@ -3,7 +3,6 @@ package mx.insabit.ValidacionMateriales.Controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +19,13 @@ import mx.insabit.ValidacionMateriales.DTO.MaterialResumenDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaDTO;
 import mx.insabit.ValidacionMateriales.DTO.ModeloCasaSimpleDTO;
 import mx.insabit.ValidacionMateriales.DTO.MovimientoMaterialDTO;
+import mx.insabit.ValidacionMateriales.DTO.RegistroDTO;
 import mx.insabit.ValidacionMateriales.DTO.SalidaCasaDTO;
 import mx.insabit.ValidacionMateriales.Entity.Casa;
 import mx.insabit.ValidacionMateriales.Entity.Material;
 import mx.insabit.ValidacionMateriales.Entity.ModeloCasa;
 import mx.insabit.ValidacionMateriales.Entity.MovimientoMaterial;
+import mx.insabit.ValidacionMateriales.Entity.RegistroHerramienta;
 import mx.insabit.ValidacionMateriales.MapStruc.MaterialMapper;
 import mx.insabit.ValidacionMateriales.Repository.CasaRepository;
 import mx.insabit.ValidacionMateriales.Repository.ModeloCasaRepository;
@@ -46,7 +47,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.server.ResponseStatusException;
 
 
-@CrossOrigin(origins = "https://inventario-frontend-pz47.onrender.com")
+//@CrossOrigin(origins = "https://inventario-frontend-pz47.onrender.com")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/materiales")
 //@CrossOrigin(origins = "*")
@@ -415,7 +417,62 @@ public ResponseEntity<?> devolverMaterialCasa(
         return "Hola desde endpoint privado, autenticación exitosa";
     }
 
+   /*@PostMapping("/prestar")
+    public RegistroHerramienta prestar(@RequestBody RegistroDTO dto){
+
+        return materialService.prestar(
+                dto.getPersonaId(),
+                dto.getHerramientaId(),
+                dto.getCantidad()
+        );
+    }
+*/
+//  PRESTAR herramienta
+@PostMapping("/prestar")
+public RegistroHerramienta prestar(@RequestParam Long personaId,
+                                   @RequestParam Long herramientaId,
+                                   @RequestParam Integer cantidad){
+    return materialService.prestar(personaId, herramientaId, cantidad);
 }
+
+//  DEVOLVER herramienta
+@PatchMapping("/devolver/{id}")
+public RegistroHerramienta devolver(@PathVariable Long id){
+    return materialService.devolver(id);
+}
+//  LISTAR REGISTROS DE HERRAMIENTAS
+@GetMapping("/herramientas")
+public List<RegistroHerramienta> listarHerramientas(){
+    return materialService.listarHerramientas();
+}
+
+}
+
+
+
+
+
+
+/*
+    @PostMapping
+    public RegistroHerramienta guardar(
+            @RequestBody RegistroHerramienta r){
+        return materialService.guardar(r);
+    }
+
+    @GetMapping("/devueltas")
+    public List<RegistroHerramienta> listarDevueltas(){
+    return materialService.listarDevueltas();
+}
+
+
+    @PatchMapping("/devolver/{id}")
+    public RegistroHerramienta devolver(
+            @PathVariable Long id){
+        return materialService.devolver(id);
+    }
+}
+    */
 /*
    private final MaterialService servicio;
 
